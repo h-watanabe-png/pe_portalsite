@@ -2,10 +2,126 @@
 <html>
 <head>
   <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PEポータルサイト - ホーム</title>
+  <link rel="stylesheet" href="common.css">
+  <script src="embed-config.js"></script>
 </head>
 <body>
-  <h1>PEポータルサイト</h1>
-  <!-- コンテンツ -->
+  <div class="container">
+    <header>
+      <h1>PEポータルサイト</h1>
+      <div id="user-info" class="user-info">
+        <span id="user-name">読み込み中...</span>
+      </div>
+    </header>
+    
+    <nav class="main-nav">
+      <a href="?path=system-team-request" class="nav-link">システムチームへの依頼</a>
+      <a href="?path=accounting-request" class="nav-link">経理への依頼</a>
+      <a href="?path=request-status" class="nav-link">依頼状況確認</a>
+      <a href="?path=faq-help" class="nav-link">FAQ・ヘルプ</a>
+    </nav>
+    
+    <main>
+      <section class="dashboard">
+        <h2>ダッシュボード</h2>
+        <div id="dashboard-stats" class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">総リクエスト数</div>
+            <div class="stat-value" id="total-requests">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">処理中</div>
+            <div class="stat-value" id="processing-requests">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">完了</div>
+            <div class="stat-value" id="completed-requests">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">完了率</div>
+            <div class="stat-value" id="completion-rate">-</div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="recent-requests">
+        <h2>最近の依頼</h2>
+        <div id="recent-requests-list" class="requests-list">
+          <p>読み込み中...</p>
+        </div>
+      </section>
+    </main>
+  </div>
+  
+  <script src="dashboard.js"></script>
+  <script>
+    // ページ読み込み時にユーザー情報とダッシュボードを読み込む
+    window.addEventListener('load', function() {
+      loadUserInfo();
+      loadDashboard();
+    });
+    
+    function loadUserInfo() {
+      google.script.run
+        .withSuccessHandler(function(user) {
+          if (user.authenticated) {
+            document.getElementById('user-name').textContent = user.name || user.email;
+          } else {
+            document.getElementById('user-name').textContent = '未ログイン';
+          }
+        })
+        .withFailureHandler(function(error) {
+          console.error('ユーザー情報取得エラー:', error);
+          document.getElementById('user-name').textContent = 'エラー';
+        })
+        .getCurrentUser();
+    }
+    
+    function loadDashboard() {
+      google.script.run
+        .withSuccessHandler(function(data) {
+          if (data.success) {
+            updateDashboard(data.stats);
+            updateRecentRequests(data.recent);
+          } else {
+            console.error('ダッシュボードデータ取得エラー:', data.error);
+          }
+        })
+        .withFailureHandler(function(error) {
+          console.error('ダッシュボード読み込みエラー:', error);
+        })
+        .getDashboardData();
+    }
+    
+    function updateDashboard(stats) {
+      document.getElementById('total-requests').textContent = stats.total || 0;
+      document.getElementById('processing-requests').textContent = stats.processing || 0;
+      document.getElementById('completed-requests').textContent = stats.completed || 0;
+      document.getElementById('completion-rate').textContent = 
+        stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) + '%' : '0%';
+    }
+    
+    function updateRecentRequests(requests) {
+      const listElement = document.getElementById('recent-requests-list');
+      
+      if (!requests || requests.length === 0) {
+        listElement.innerHTML = '<p>依頼がありません</p>';
+        return;
+      }
+      
+      const html = requests.map(req => `
+        <div class="request-item">
+          <div class="request-id">${req.id}</div>
+          <div class="request-summary">${req.summary}</div>
+          <div class="request-status">${req.status}</div>
+        </div>
+      `).join('');
+      
+      listElement.innerHTML = html;
+    }
+  </script>
 </body>
 </html>
