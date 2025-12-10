@@ -111,6 +111,11 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# Google API認証ファイル（機密情報）
+token.json
+credentials.json
+service_account.json
 """
     gitignore_path = PROJECT_ROOT / '.gitignore'
     if not gitignore_path.exists():

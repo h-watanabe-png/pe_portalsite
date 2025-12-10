@@ -7,7 +7,6 @@ import json
 import subprocess
 import os
 from pathlib import Path
-from datetime import datetime
 
 # プロジェクトルートディレクトリ
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -276,8 +275,8 @@ def clasp_push():
             print("   その後、clasp loginを実行して認証してください")
             return False
         
-        # clasp pushを実行
-        result = subprocess.run(['clasp', 'push'], 
+        # clasp pushを実行（--forceオプションで非対話的に実行）
+        result = subprocess.run(['clasp', 'push', '--force'], 
                               capture_output=True, text=True)
         if result.returncode == 0:
             print("✓ clasp pushが成功しました")

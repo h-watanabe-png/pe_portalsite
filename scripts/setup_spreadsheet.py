@@ -5,7 +5,7 @@ Cursor AIエージェントが自動生成・実行
 注意: Google Sheets APIを使用するため、認証が必要です。
 認証方法:
 1. OAuth2認証: token.jsonファイルが必要
-2. サービスアカウント: credentials.jsonファイルが必要
+2. サービスアカウント: service_account.jsonファイルが必要
 """
 
 import json
@@ -209,9 +209,12 @@ def setup_spreadsheet():
                 body = {'values': values}
                 start_row = 2
                 end_row = start_row + len(values) - 1
+                # 列数を計算（ヘッダーの列数に合わせる）
+                num_cols = len(definition['headers'])
+                col_letter = chr(64 + num_cols) if num_cols <= 26 else 'Z'
                 spreadsheet.values().update(
                     spreadsheetId=SPREADSHEET_ID,
-                    range=f'{sheet_name}!A{start_row}:D{end_row}',
+                    range=f'{sheet_name}!A{start_row}:{col_letter}{end_row}',
                     valueInputOption='RAW',
                     body=body
                 ).execute()
