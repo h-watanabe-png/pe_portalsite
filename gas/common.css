@@ -1,0 +1,14 @@
+/**
+ * PEポータルサイト - 共通CSS
+ */
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  color: #333;
+  font-size: 24px;
+}
