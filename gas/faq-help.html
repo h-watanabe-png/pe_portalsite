@@ -2,10 +2,424 @@
 <html>
 <head>
   <base target="_top">
-  <title>FAQ・ヘルプ</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ・ヘルプ - PEポータルサイト</title>
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .search-container {
+      margin-bottom: 30px;
+    }
+    
+    .search-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .search-box input {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    
+    .search-box button {
+      padding: 12px 24px;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .search-box button:hover {
+      background-color: #1565c0;
+    }
+    
+    .filter-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-tab {
+      padding: 8px 16px;
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .filter-tab:hover {
+      background-color: #e0e0e0;
+    }
+    
+    .filter-tab.active {
+      background-color: #1976d2;
+      color: white;
+      border-color: #1976d2;
+    }
+    
+    .search-results {
+      margin-top: 20px;
+    }
+    
+    .result-item {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 15px;
+    }
+    
+    .result-item h3 {
+      margin-top: 0;
+      color: #1976d2;
+    }
+    
+    .result-item .result-meta {
+      font-size: 12px;
+      color: #666;
+      margin-top: 10px;
+    }
+    
+    .result-item .result-tags {
+      margin-top: 10px;
+    }
+    
+    .result-item .result-tag {
+      display: inline-block;
+      padding: 4px 8px;
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-right: 5px;
+    }
+    
+    .result-item .result-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: #1976d2;
+      text-decoration: none;
+    }
+    
+    .result-item .result-link:hover {
+      text-decoration: underline;
+    }
+    
+    .add-knowledge-section {
+      margin-top: 40px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    
+    .add-knowledge-section h2 {
+      margin-top: 0;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .form-group textarea {
+      min-height: 100px;
+    }
+  </style>
 </head>
 <body>
-  <h1>FAQ・ヘルプ</h1>
-  <!-- コンテンツ -->
+  <div class="container">
+    <header>
+      <h1>FAQ・ヘルプ</h1>
+      <div class="user-info">
+        <a href="?path=index" class="nav-link">ホームに戻る</a>
+      </div>
+    </header>
+    
+    <main>
+      <section class="search-container">
+        <div class="search-box">
+          <input type="text" id="search-query" placeholder="キーワードで検索（ファイル名、タグ、説明など）" />
+          <button onclick="performSearch()">検索</button>
+        </div>
+        
+        <div class="filter-tabs">
+          <div class="filter-tab active" data-category="" onclick="filterByCategory('')">すべて</div>
+          <div class="filter-tab" data-category="システム" onclick="filterByCategory('システム')">システム</div>
+          <div class="filter-tab" data-category="経理" onclick="filterByCategory('経理')">経理</div>
+          <div class="filter-tab" data-category="その他" onclick="filterByCategory('その他')">その他</div>
+        </div>
+      </section>
+      
+      <section class="search-results" id="search-results">
+        <p>検索キーワードを入力して検索してください。</p>
+      </section>
+      
+      <section class="add-knowledge-section">
+        <h2>ナレッジを追加</h2>
+        <p>Google Driveのファイルやナレッジを追加して、他のユーザーと共有できます。</p>
+        
+        <form id="add-knowledge-form">
+          <div class="form-group">
+            <label for="knowledge-file-id">Google DriveファイルID（オプション）</label>
+            <input type="text" id="knowledge-file-id" placeholder="Google DriveのファイルIDを入力（URLから取得可能）" />
+            <small>例: ファイルのURLが https://drive.google.com/file/d/1ABC.../view の場合、1ABC... の部分</small>
+          </div>
+          
+          <div class="form-group">
+            <label for="knowledge-title">タイトル *</label>
+            <input type="text" id="knowledge-title" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="knowledge-category">カテゴリ *</label>
+            <select id="knowledge-category" required>
+              <option value="">選択してください</option>
+              <option value="システム">システム</option>
+              <option value="経理">経理</option>
+              <option value="その他">その他</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="knowledge-description">説明 *</label>
+            <textarea id="knowledge-description" required placeholder="ナレッジの説明を記入してください"></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="knowledge-tags">タグ（カンマ区切り）</label>
+            <input type="text" id="knowledge-tags" placeholder="例: マニュアル, 手順, トラブルシューティング" />
+          </div>
+          
+          <button type="submit" class="btn btn-primary">追加</button>
+        </form>
+      </section>
+    </main>
+  </div>
+  
+  <script>
+    let currentCategory = '';
+    
+    // 検索実行
+    function performSearch() {
+      const query = document.getElementById('search-query').value.trim();
+      
+      if (!query) {
+        alert('検索キーワードを入力してください');
+        return;
+      }
+      
+      showLoading();
+      
+      google.script.run
+        .withSuccessHandler(displaySearchResults)
+        .withFailureHandler(showError)
+        .searchKnowledge(query, currentCategory, 50);
+    }
+    
+    // カテゴリでフィルタ
+    function filterByCategory(category) {
+      currentCategory = category;
+      
+      // タブの表示を更新
+      document.querySelectorAll('.filter-tab').forEach(tab => {
+        if (tab.dataset.category === category) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+      
+      // 検索クエリがある場合は再検索
+      const query = document.getElementById('search-query').value.trim();
+      if (query) {
+        performSearch();
+      }
+    }
+    
+    // 検索結果を表示
+    function displaySearchResults(result) {
+      hideLoading();
+      
+      if (!result.success) {
+        showError(result.error);
+        return;
+      }
+      
+      const resultsContainer = document.getElementById('search-results');
+      
+      if (result.total === 0) {
+        resultsContainer.innerHTML = '<p>検索結果が見つかりませんでした。</p>';
+        return;
+      }
+      
+      let html = `<h2>検索結果（${result.total}件）</h2>`;
+      
+      // ファイル結果
+      if (result.results.files.length > 0) {
+        html += '<h3>ファイル</h3>';
+        result.results.files.forEach(file => {
+          html += `
+            <div class="result-item">
+              <h3>${escapeHtml(file.title)}</h3>
+              <p>${escapeHtml(file.description || '説明なし')}</p>
+              <div class="result-tags">
+                ${file.tags.map(tag => `<span class="result-tag">${escapeHtml(tag)}</span>`).join('')}
+              </div>
+              <div class="result-meta">
+                種類: ${file.mimeType} | 更新日: ${formatDate(file.lastModified)}
+              </div>
+              <a href="${file.url}" target="_blank" class="result-link">ファイルを開く →</a>
+            </div>
+          `;
+        });
+      }
+      
+      // ナレッジベース結果
+      if (result.results.knowledgeBase.length > 0) {
+        html += '<h3>ナレッジベース</h3>';
+        result.results.knowledgeBase.forEach(knowledge => {
+          html += `
+            <div class="result-item">
+              <h3>${escapeHtml(knowledge.title)}</h3>
+              <p>${escapeHtml(knowledge.content.substring(0, 200))}...</p>
+              <div class="result-tags">
+                ${knowledge.tags.map(tag => `<span class="result-tag">${escapeHtml(tag)}</span>`).join('')}
+              </div>
+              <div class="result-meta">
+                カテゴリ: ${knowledge.category} | 更新日: ${formatDate(knowledge.updatedAt)}
+              </div>
+            </div>
+          `;
+        });
+      }
+      
+      // FAQ結果
+      if (result.results.faq.length > 0) {
+        html += '<h3>FAQ</h3>';
+        result.results.faq.forEach(faq => {
+          html += `
+            <div class="result-item">
+              <h3>${escapeHtml(faq.title)}</h3>
+              <p>${escapeHtml(faq.description || '')}</p>
+              <div class="result-tags">
+                ${faq.tags.map(tag => `<span class="result-tag">${escapeHtml(tag)}</span>`).join('')}
+              </div>
+              ${faq.link ? `<a href="${faq.link}" target="_blank" class="result-link">詳細を見る →</a>` : ''}
+            </div>
+          `;
+        });
+      }
+      
+      resultsContainer.innerHTML = html;
+    }
+    
+    // ナレッジ追加フォーム送信
+    document.getElementById('add-knowledge-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      addKnowledge();
+    });
+    
+    function addKnowledge() {
+      const fileId = document.getElementById('knowledge-file-id').value.trim();
+      const title = document.getElementById('knowledge-title').value.trim();
+      const category = document.getElementById('knowledge-category').value;
+      const description = document.getElementById('knowledge-description').value.trim();
+      const tags = document.getElementById('knowledge-tags').value.split(',').map(t => t.trim()).filter(t => t);
+      
+      if (!title || !category || !description) {
+        alert('タイトル、カテゴリ、説明は必須です');
+        return;
+      }
+      
+      showLoading();
+      
+      if (fileId) {
+        // ファイルIDが指定されている場合は、ファイルとして追加
+        google.script.run
+          .withSuccessHandler(onKnowledgeAdded)
+          .withFailureHandler(showError)
+          .addFileAsKnowledge(fileId, category, tags, description);
+      } else {
+        // ファイルIDが指定されていない場合は、ナレッジベースに追加
+        google.script.run
+          .withSuccessHandler(onKnowledgeAdded)
+          .withFailureHandler(showError)
+          .addKnowledgeByUser(title, category, description, tags);
+      }
+    }
+    
+    function onKnowledgeAdded(result) {
+      hideLoading();
+      
+      if (result.success) {
+        alert('ナレッジを追加しました');
+        document.getElementById('add-knowledge-form').reset();
+        // 検索を再実行（オプション）
+        const query = document.getElementById('search-query').value.trim();
+        if (query) {
+          performSearch();
+        }
+      } else {
+        alert('エラー: ' + result.error);
+      }
+    }
+    
+    function showLoading() {
+      document.getElementById('search-results').innerHTML = '<p>検索中...</p>';
+    }
+    
+    function hideLoading() {
+      // ローディングは既に結果で置き換えられる
+    }
+    
+    function showError(error) {
+      hideLoading();
+      document.getElementById('search-results').innerHTML = 
+        `<div class="error">エラーが発生しました: ${escapeHtml(error)}</div>`;
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    function formatDate(date) {
+      if (!date) return '';
+      const d = new Date(date);
+      return d.toLocaleDateString('ja-JP') + ' ' + d.toLocaleTimeString('ja-JP');
+    }
+    
+    // Enterキーで検索
+    document.getElementById('search-query').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        performSearch();
+      }
+    });
+  </script>
 </body>
 </html>
