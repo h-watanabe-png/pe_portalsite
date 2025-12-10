@@ -4,53 +4,117 @@
   <base target="_top">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PEポータルサイト - ホーム</title>
+  <title>PEポータルサイト</title>
   <link rel="stylesheet" href="common.css">
-  <script src="embed-config.js"></script>
+  <style>
+    .welcome-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    .welcome-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    
+    .welcome-subtitle {
+      font-size: 18px;
+      opacity: 0.9;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>PEポータルサイト</h1>
-      <div id="user-info" class="user-info">
-        <span id="user-name">読み込み中...</span>
+      <h1>📋 PEポータルサイト</h1>
+      <div class="user-info">
+        <span class="user-status" id="user-status">未ログイン</span>
+        <a href="?path=faq-help" class="nav-link">❓ ヘルプ</a>
       </div>
     </header>
     
-    <nav class="main-nav">
-      <a href="?path=system-team-request" class="nav-link">システムチームへの依頼</a>
-      <a href="?path=accounting-request" class="nav-link">経理への依頼</a>
-      <a href="?path=request-status" class="nav-link">依頼状況確認</a>
-      <a href="?path=faq-help" class="nav-link">FAQ・ヘルプ</a>
-    </nav>
-    
     <main>
-      <section class="dashboard">
-        <h2>ダッシュボード</h2>
-        <div id="dashboard-stats" class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-label">総リクエスト数</div>
-            <div class="stat-value" id="total-requests">-</div>
+      <!-- ウェルカムセクション -->
+      <div class="welcome-section">
+        <h2 class="welcome-title">ようこそ、PEポータルサイトへ</h2>
+        <p class="welcome-subtitle">システムチームや経理への依頼を簡単に管理できます</p>
+      </div>
+      
+      <!-- ナビゲーションカード -->
+      <div class="nav-cards">
+        <a href="?path=system-team-request" class="nav-card">
+          <span class="nav-card-icon">💻</span>
+          <div class="nav-card-title">システムチームへの依頼</div>
+          <div class="nav-card-description">PC設定、システム改修などの依頼</div>
+        </a>
+        
+        <a href="?path=accounting-request" class="nav-card">
+          <span class="nav-card-icon">💰</span>
+          <div class="nav-card-title">経理への依頼</div>
+          <div class="nav-card-description">請求書チェック、報酬計算などの依頼</div>
+        </a>
+        
+        <a href="?path=request-status" class="nav-card">
+          <span class="nav-card-icon">📊</span>
+          <div class="nav-card-title">依頼状況確認</div>
+          <div class="nav-card-description">送信した依頼の状況を確認</div>
+        </a>
+        
+        <a href="?path=faq-help" class="nav-card">
+          <span class="nav-card-icon">❓</span>
+          <div class="nav-card-title">FAQ・ヘルプ</div>
+          <div class="nav-card-description">よくある質問とナレッジ検索</div>
+        </a>
+      </div>
+      
+      <!-- ダッシュボード -->
+      <section class="section">
+        <h2 class="section-title">📈 ダッシュボード</h2>
+        <div class="dashboard-grid" id="dashboard-grid">
+          <div class="dashboard-card">
+            <div class="dashboard-card-label">総リクエスト数</div>
+            <div class="dashboard-card-value">
+              <span id="total-requests">0</span>
+            </div>
           </div>
-          <div class="stat-card">
-            <div class="stat-label">処理中</div>
-            <div class="stat-value" id="processing-requests">-</div>
+          
+          <div class="dashboard-card">
+            <div class="dashboard-card-label">処理中</div>
+            <div class="dashboard-card-value">
+              <span id="processing-requests">0</span>
+            </div>
           </div>
-          <div class="stat-card">
-            <div class="stat-label">完了</div>
-            <div class="stat-value" id="completed-requests">-</div>
+          
+          <div class="dashboard-card">
+            <div class="dashboard-card-label">完了</div>
+            <div class="dashboard-card-value">
+              <span id="completed-requests">0</span>
+            </div>
           </div>
-          <div class="stat-card">
-            <div class="stat-label">完了率</div>
-            <div class="stat-value" id="completion-rate">-</div>
+          
+          <div class="dashboard-card">
+            <div class="dashboard-card-label">完了率</div>
+            <div class="dashboard-card-value">
+              <span id="completion-rate">0</span><span class="dashboard-card-unit">%</span>
+            </div>
           </div>
         </div>
       </section>
       
-      <section class="recent-requests">
-        <h2>最近の依頼</h2>
-        <div id="recent-requests-list" class="requests-list">
-          <p>読み込み中...</p>
+      <!-- 最近の依頼 -->
+      <section class="section">
+        <h2 class="section-title">📋 最近の依頼</h2>
+        <div id="recent-requests">
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <div class="empty-state-message">依頼がありません</div>
+            <div class="empty-state-description">上記のカードから新しい依頼を作成してください</div>
+          </div>
         </div>
       </section>
     </main>
@@ -58,69 +122,94 @@
   
   <script src="dashboard.js"></script>
   <script>
-    // ページ読み込み時にユーザー情報とダッシュボードを読み込む
-    window.addEventListener('load', function() {
-      loadUserInfo();
-      loadDashboard();
+    // ページ読み込み時にダッシュボードデータを取得
+    window.addEventListener('DOMContentLoaded', function() {
+      // ユーザー情報を取得
+      google.script.run
+        .withSuccessHandler(function(authResult) {
+          if (authResult && authResult.authorized) {
+            document.getElementById('user-status').textContent = authResult.userEmail;
+            document.getElementById('user-status').style.background = 'rgba(40, 167, 69, 0.3)';
+          }
+        })
+        .withFailureHandler(function(error) {
+          console.error('認証チェックエラー:', error);
+        })
+        .checkAuthorization();
+      
+      // ダッシュボードデータを取得
+      loadDashboardData();
     });
     
-    function loadUserInfo() {
-      google.script.run
-        .withSuccessHandler(function(user) {
-          if (user.authenticated) {
-            document.getElementById('user-name').textContent = user.name || user.email;
-          } else {
-            document.getElementById('user-name').textContent = '未ログイン';
-          }
-        })
-        .withFailureHandler(function(error) {
-          console.error('ユーザー情報取得エラー:', error);
-          document.getElementById('user-name').textContent = 'エラー';
-        })
-        .getCurrentUser();
-    }
-    
-    function loadDashboard() {
+    function loadDashboardData() {
       google.script.run
         .withSuccessHandler(function(data) {
-          if (data.success) {
-            updateDashboard(data.stats);
-            updateRecentRequests(data.recent);
-          } else {
-            console.error('ダッシュボードデータ取得エラー:', data.error);
+          if (data && data.success) {
+            // ダッシュボード統計を更新
+            document.getElementById('total-requests').textContent = data.stats.total || 0;
+            document.getElementById('processing-requests').textContent = data.stats.processing || 0;
+            document.getElementById('completed-requests').textContent = data.stats.completed || 0;
+            document.getElementById('completion-rate').textContent = data.stats.completionRate || 0;
+            
+            // 最近の依頼を表示
+            if (data.recentRequests && data.recentRequests.length > 0) {
+              displayRecentRequests(data.recentRequests);
+            }
           }
         })
         .withFailureHandler(function(error) {
-          console.error('ダッシュボード読み込みエラー:', error);
+          console.error('ダッシュボードデータ取得エラー:', error);
         })
         .getDashboardData();
     }
     
-    function updateDashboard(stats) {
-      document.getElementById('total-requests').textContent = stats.total || 0;
-      document.getElementById('processing-requests').textContent = stats.processing || 0;
-      document.getElementById('completed-requests').textContent = stats.completed || 0;
-      document.getElementById('completion-rate').textContent = 
-        stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) + '%' : '0%';
-    }
-    
-    function updateRecentRequests(requests) {
-      const listElement = document.getElementById('recent-requests-list');
+    function displayRecentRequests(requests) {
+      const container = document.getElementById('recent-requests');
       
-      if (!requests || requests.length === 0) {
-        listElement.innerHTML = '<p>依頼がありません</p>';
+      if (requests.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <div class="empty-state-message">依頼がありません</div>
+            <div class="empty-state-description">上記のカードから新しい依頼を作成してください</div>
+          </div>
+        `;
         return;
       }
       
-      const html = requests.map(req => `
-        <div class="request-item">
-          <div class="request-id">${req.id}</div>
-          <div class="request-summary">${req.summary}</div>
-          <div class="request-status">${req.status}</div>
-        </div>
-      `).join('');
+      let html = '<div class="card"><table class="data-table"><thead><tr>';
+      html += '<th>依頼ID</th><th>依頼種別</th><th>ブランド</th><th>緊急度</th><th>ステータス</th><th>受付日</th>';
+      html += '</tr></thead><tbody>';
       
-      listElement.innerHTML = html;
+      requests.forEach(request => {
+        const statusClass = request.status === '完了' ? 'completed' : 
+                           request.status === '処理中' ? 'processing' : 
+                           request.status === '保留' ? 'pending' : 'pending';
+        
+        html += `<tr>`;
+        html += `<td><strong>${escapeHtml(request.requestId || '')}</strong></td>`;
+        html += `<td>${escapeHtml(request.requestType === 'system_team' ? 'システムチーム' : '経理')}</td>`;
+        html += `<td>${escapeHtml(request.brand || '')}</td>`;
+        html += `<td><span class="badge badge-${request.urgency === '高' ? 'danger' : request.urgency === '中' ? 'warning' : 'primary'}">${escapeHtml(request.urgency || '')}</span></td>`;
+        html += `<td><span class="status-badge ${statusClass}">${escapeHtml(request.status || '')}</span></td>`;
+        html += `<td>${formatDate(request.requestDate)}</td>`;
+        html += `</tr>`;
+      });
+      
+      html += '</tbody></table></div>';
+      container.innerHTML = html;
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    function formatDate(date) {
+      if (!date) return '';
+      const d = new Date(date);
+      return d.toLocaleDateString('ja-JP');
     }
   </script>
 </body>
