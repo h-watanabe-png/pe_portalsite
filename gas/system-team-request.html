@@ -231,9 +231,17 @@
     }
     
     function hideMessages() {
-      document.getElementById('success-message').style.display = 'none';
-      document.getElementById('error-message').style.display = 'none';
+      const successMsg = document.getElementById('success-message');
+      const errorMsg = document.getElementById('error-message');
+      if (successMsg) successMsg.style.display = 'none';
+      if (errorMsg) errorMsg.style.display = 'none';
     }
+    
+    // グローバル関数として定義（form-handler.jsから呼び出される）
+    window.submitSystemTeamRequest = submitSystemTeamRequest;
+    window.showSuccess = showSuccess;
+    window.showError = showError;
+    window.hideMessages = hideMessages;
   </script>
 </body>
 </html>

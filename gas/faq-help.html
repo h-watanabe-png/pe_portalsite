@@ -234,10 +234,22 @@
       
       showLoading();
       
-      google.script.run
-        .withSuccessHandler(displaySearchResults)
-        .withFailureHandler(showError)
-        .searchKnowledge(query, currentCategory, 50);
+      // POSTリクエストで検索
+      fetch(window.location.href.replace('?path=faq-help', ''), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          action: 'search_knowledge',
+          query: query,
+          category: currentCategory,
+          limit: 50
+        })
+      })
+      .then(response => response.json())
+      .then(result => displaySearchResults(result))
+      .catch(error => showError(error.toString()));
     }
     
     // カテゴリでフィルタ
@@ -357,19 +369,31 @@
       
       showLoading();
       
-      if (fileId) {
-        // ファイルIDが指定されている場合は、ファイルとして追加
-        google.script.run
-          .withSuccessHandler(onKnowledgeAdded)
-          .withFailureHandler(showError)
-          .addFileAsKnowledge(fileId, category, tags, description);
-      } else {
-        // ファイルIDが指定されていない場合は、ナレッジベースに追加
-        google.script.run
-          .withSuccessHandler(onKnowledgeAdded)
-          .withFailureHandler(showError)
-          .addKnowledgeByUser(title, category, description, tags);
-      }
+      // POSTリクエストで送信
+      const requestData = {
+        title: title,
+        category: category,
+        content: description,
+        description: description,
+        tags: tags,
+        fileId: fileId
+      };
+      
+      const payload = JSON.stringify(requestData);
+      
+      fetch(window.location.href.replace('?path=faq-help', ''), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          action: 'add_knowledge',
+          ...requestData
+        })
+      })
+      .then(response => response.json())
+      .then(result => onKnowledgeAdded(result))
+      .catch(error => showError(error.toString()));
     }
     
     function onKnowledgeAdded(result) {

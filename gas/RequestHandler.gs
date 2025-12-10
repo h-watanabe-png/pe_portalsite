@@ -21,8 +21,18 @@ function handleSubmitRequest(e) {
     }
     
     // リクエストデータを取得
-    const requestType = e.parameter.requestType; // 'system_team' または 'accounting'
-    const requestData = JSON.parse(e.postData.contents || '{}');
+    let requestType, requestData;
+    
+    if (e.parameter.requestType) {
+      // URLパラメータから取得
+      requestType = e.parameter.requestType;
+      requestData = JSON.parse(e.postData.contents || '{}');
+    } else {
+      // POSTデータから取得
+      const postData = JSON.parse(e.postData.contents || '{}');
+      requestType = postData.requestType || 'system_team';
+      requestData = postData.data || postData;
+    }
     
     // データ検証
     if (!validateRequestData(requestData, requestType)) {

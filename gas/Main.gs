@@ -133,6 +133,16 @@ function doPost(e) {
         return handleSubmitRequest(e);
       case 'update_status':
         return handleUpdateStatus(e);
+      case 'search_knowledge':
+        return handleSearchKnowledge(e);
+      case 'add_knowledge':
+        return handleAddKnowledge(e);
+      case 'update_knowledge':
+        return handleUpdateKnowledge(e);
+      case 'add_file':
+        return handleAddFile(e);
+      case 'update_file_metadata':
+        return handleUpdateFileMetadata(e);
       default:
         return ContentService.createTextOutput(JSON.stringify({
           success: false,
