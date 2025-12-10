@@ -134,12 +134,20 @@ if __name__ == '__main__':
     import sys
     force = '--force' in sys.argv or '-f' in sys.argv
     
+    print("\n【注意】")
+    print("  このスクリプトはコードのプッシュのみを行います。")
+    print("  デプロイ管理（既存デプロイの更新など）は deploy_manage.py を使用してください。")
+    print("  例: python scripts\\deploy_manage.py update")
+    print()
+    
     success = deploy_gas(force=force)
     if success:
         print("\n✓ すべての処理が正常に完了しました")
         print("\n【次のステップ】")
-        print("1. GASエディタでWeb AppのURLを取得")
-        print("2. ブラウザでアクセスして動作確認")
+        print("  デプロイ管理スクリプトを実行:")
+        print("    python scripts\\deploy_manage.py update  # 既存デプロイを更新（推奨）")
+        print("    または")
+        print("    python scripts\\deploy_manage.py create  # 新しいデプロイを作成")
     else:
         print("\n✗ 一部の処理でエラーが発生しました")
         exit(1)

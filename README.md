@@ -47,11 +47,14 @@ GASのデプロイ回数に制限がないため、**直接デプロイしてWeb
 ```bash
 # 1. gas/フォルダ内のファイルを編集
 
-# 2. デプロイ
+# 2. コードをプッシュ
 python scripts\deploy_gas.py --force
 
-# 3. Web AppのURLで動作確認
-# GASエディタで「デプロイ」→「新しいデプロイ」→「ウェブアプリ」でURLを取得
+# 3. デプロイ管理（既存デプロイを更新）
+python scripts\deploy_manage.py update
+
+# 4. Web AppのURLで動作確認
+# deploy_manage.pyがGASエディタを開き、手順を表示します
 ```
 
 詳細は `docs/開発フローガイド.md` を参照してください。
