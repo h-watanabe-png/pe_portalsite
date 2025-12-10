@@ -111,24 +111,34 @@ def get_credentials():
     # OAuth2認証（token.json）
     token_path = PROJECT_ROOT / 'token.json'
     credentials_path = PROJECT_ROOT / 'credentials.json'
-    service_account_path = PROJECT_ROOT / 'service_account.json'
+    
+    # サービスアカウント認証（複数のファイル名をサポート）
+    service_account_paths = [
+        PROJECT_ROOT / 'service_account.json',
+        PROJECT_ROOT / 'md-csv-autodl-ed1adb38de50.json',  # 既存の認証ファイル
+    ]
+    
+    SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
     
     if token_path.exists():
         # OAuth2認証
-        SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+        print("  OAuth2認証を使用します（token.json）")
         creds = Credentials.from_authorized_user_file(str(token_path), SCOPES)
         return creds
-    elif service_account_path.exists():
-        # サービスアカウント認証
-        SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-        creds = service_account.Credentials.from_service_account_file(
-            str(service_account_path), scopes=SCOPES)
-        return creds
     else:
+        # サービスアカウント認証（複数のファイル名を試行）
+        for service_account_path in service_account_paths:
+            if service_account_path.exists():
+                print(f"  サービスアカウント認証を使用します（{service_account_path.name}）")
+                creds = service_account.Credentials.from_service_account_file(
+                    str(service_account_path), scopes=SCOPES)
+                return creds
+        
+        # 認証ファイルが見つからない場合
         print("⚠ 警告: 認証ファイルが見つかりません")
         print("   以下のいずれかの認証方法を設定してください:")
         print("   1. OAuth2認証: token.jsonファイル")
-        print("   2. サービスアカウント: service_account.jsonファイル")
+        print("   2. サービスアカウント: service_account.json または md-csv-autodl-ed1adb38de50.json ファイル")
         return None
 
 def setup_spreadsheet():
