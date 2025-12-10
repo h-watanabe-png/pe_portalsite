@@ -36,11 +36,22 @@ function handleSubmitRequest(e) {
     // スプレッドシートに保存
     const requestId = saveRequest(requestData, requestType, authResult.userEmail);
     
-    // 通知送信（非同期、エラーが発生しても処理は継続）
+    // Slack通知を送信（拡張版）
     try {
-      sendNotificationAsync(requestId, requestType);
+      const slackResult = sendSlackNotificationEnhanced({
+        requestId: requestId,
+        requesterName: data.requesterName || authResult.userEmail,
+        brand: data.brand || '',
+        urgency: data.urgency || '中',
+        issue: data.issue || data.requestContent || '',
+        requestId: requestId
+      }, 'new_request', requestType);
+      
+      if (slackResult.success) {
+        Logger.log(`Slack通知を送信しました: ${requestId}`);
+      }
     } catch (e) {
-      Logger.log('通知送信エラー（処理は継続）: ' + e.toString());
+      Logger.log('Slack通知送信エラー（処理は継続）: ' + e.toString());
     }
     
     return ContentService.createTextOutput(JSON.stringify({
