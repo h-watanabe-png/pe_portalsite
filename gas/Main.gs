@@ -153,7 +153,7 @@ function doGet(e) {
   }
   
   // 認証成功時は通常のページを返す
-  const path = e.parameter.path || 'index';
+  let path = e.parameter.path || 'index';
   
   // 許可されたパスのリスト
   const allowedPaths = ['index', 'system-team-request', 'accounting-request', 'request-status', 'faq-help', 'user-manual', 'troubleshooting'];

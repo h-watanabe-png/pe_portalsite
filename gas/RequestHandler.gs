@@ -268,12 +268,12 @@ function saveRequest(data, requestType, userEmail) {
     message: '依頼を送信しました'
   };
   
-  if (requestData.autoClassified && requestData.classificationResult) {
+  if (data.autoClassified && data.classificationResult) {
     response.needsFeedback = true;
-    response.classificationResult = requestData.classificationResult;
+    response.classificationResult = data.classificationResult;
   }
   
-  return response;
+  return requestId;
 }
 
 /**
