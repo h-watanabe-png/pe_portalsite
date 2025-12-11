@@ -98,6 +98,40 @@ pe_portalsite_ai_develop/
 
 プロジェクトに関するドキュメントは`docs/`フォルダに格納されます。
 
+### 主要ドキュメント
+- `docs/要件定義書.md` - プロジェクトの要件定義
+- `docs/実装進捗状況.md` - 現在の進捗状況
+- `docs/Slack情報同期ガイド.md` - Slack情報同期機能の使用方法
+- `docs/開発フローガイド.md` - 開発フローの詳細
+
+## 🔗 Slack連携
+
+Slack APIからユーザー情報とチャンネル情報を取得してスプレッドシートに書き込む機能を実装しています。
+
+### 設定方法
+
+1. **slack_config.jsonの設定**
+   - プロジェクトルートに`slack_config.json`を作成
+   - `slack_bot_token`と`s-hometutor_id`を設定
+
+2. **GASスクリプトプロパティの設定**
+   - GASエディタで「プロジェクトの設定」→「スクリプト プロパティ」を開く
+   - `slack_bot_token`と`s-hometutor_id`を追加
+
+### 実行方法
+
+**Pythonスクリプト（ローカル開発）:**
+```bash
+python scripts/sync_slack_info.py
+```
+
+**GASスクリプト:**
+```javascript
+syncSlackInfo()
+```
+
+詳細は `docs/Slack情報同期ガイド.md` を参照してください。
+
 ---
 
 ## 📝 変更履歴 (Change History)

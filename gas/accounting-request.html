@@ -2,10 +2,374 @@
 <html>
 <head>
   <base target="_top">
-  <title>経理への依頼</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>経理への依頼 - PEポータルサイト</title>
+  <link rel="stylesheet" href="common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h1>経理への依頼</h1>
-  <!-- コンテンツ -->
-</body>
-</html>
+  <div class="container">
+    <!-- 固定ヘッダー -->
+    <header>
+      <h1>経理への依頼</h1>
+      <div class="user-info">
+        <a href="?path=index" class="nav-link">ホームに戻る</a>
+      </div>
+    </header>
+    
+    <!-- メインコンテンツ -->
+    <main>
+      <section class="section">
+        <h2 class="section-title">依頼フォーム</h2>
+        <div class="card">
+          <div id="success-message" class="alert alert-success hidden"></div>
+          <div id="error-message" class="alert alert-error hidden"></div>
+          
+          <form id="accounting-request-form">
+            <div class="form-group">
+              <label for="requester-name" class="form-label required">依頼者氏名</label>
+              <input type="text" id="requester-name" name="requesterName" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="brand" class="form-label required">ブランド</label>
+              <select id="brand" name="brand" class="form-control" required>
+                <option value="">選択してください</option>
+                <option value="PE">PE</option>
+                <option value="EDUBAL">EDUBAL</option>
+                <option value="その他">その他</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="urgency" class="form-label required">緊急度</label>
+              <select id="urgency" name="urgency" class="form-control" required>
+                <option value="">選択してください</option>
+                <option value="高">高</option>
+                <option value="中">中</option>
+                <option value="低">低</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="request-type" class="form-label required">依頼種別</label>
+              <select id="request-type" name="requestType" class="form-control" required>
+                <option value="">選択してください</option>
+                <option value="請求書作成">請求書作成</option>
+                <option value="請求書修正">請求書修正</option>
+                <option value="請求書チェック">請求書チェック</option>
+                <option value="報酬計算">報酬計算</option>
+                <option value="報酬支払">報酬支払</option>
+                <option value="振込手続き">振込手続き</option>
+                <option value="クレカ決済">クレカ決済</option>
+                <option value="口座変更・登録">口座変更・登録</option>
+                <option value="領収書発行">領収書発行</option>
+                <option value="金額確認">金額確認</option>
+                <option value="その他">その他</option>
+              </select>
+              <div class="help-text">依頼の種類を選択してください</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="desired-date" class="form-label">対応希望日</label>
+              <input type="date" id="desired-date" name="desiredDate" class="form-control">
+              <div class="help-text">希望する対応日を選択してください（任意）</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="household-id" class="form-label">世帯ID</label>
+              <input type="text" id="household-id" name="householdId" class="form-control">
+              <div class="help-text">該当する世帯IDがある場合に入力してください（任意）</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="student-number" class="form-label">生徒番号</label>
+              <input type="text" id="student-number" name="studentNumber" class="form-control">
+              <div class="help-text">該当する生徒番号がある場合に入力してください（任意）</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="teacher-number" class="form-label">教師番号</label>
+              <input type="text" id="teacher-number" name="teacherNumber" class="form-control">
+              <div class="help-text">該当する教師番号がある場合に入力してください（任意）</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="request-month" class="form-label">請求月</label>
+              <input type="month" id="request-month" name="requestMonth" class="form-control">
+              <div class="help-text">請求対象の月を選択してください（任意）</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="amount" class="form-label">金額</label>
+              <input type="number" id="amount" name="amount" class="form-control" min="0" step="1">
+              <div class="help-text">該当する金額がある場合に入力してください（任意）</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="issue" class="form-label required">依頼内容</label>
+              <textarea id="issue" name="issue" class="form-control" required placeholder="依頼内容を詳しく記入してください"></textarea>
+              <div class="help-text" id="issue-help-text"></div>
+            </div>
+            
+            <div class="form-group">
+              <label for="memo" class="form-label">備考</label>
+              <textarea id="memo" name="memo" class="form-control" placeholder="その他の情報があれば記入してください（任意）"></textarea>
+            </div>
+            
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary" id="submit-btn">送信</button>
+              <button type="button" class="btn btn-secondary" onclick="resetForm()">リセット</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+  
+  <!-- ローディングオーバーレイ -->
+  <div id="loading-overlay" class="loading-overlay hidden">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">送信中...</div>
+  </div>
+  
+  <script src="form-handler.js"></script>
+  <script>
+    // ページ読み込み時にバリデーションを設定
+    window.addEventListener('DOMContentLoaded', function() {
+      setupFormValidation();
+    });
+    
+    // フォーム送信処理
+    document.getElementById('accounting-request-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      submitAccountingRequest();
+    });
+    
+    function resetForm() {
+      document.getElementById('accounting-request-form').reset();
+      hideMessages();
+    }
+    
+    function hideMessages() {
+      document.getElementById('success-message').classList.add('hidden');
+      document.getElementById('error-message').classList.add('hidden');
+    }
+    
+    function showSuccess(message) {
+      const successEl = document.getElementById('success-message');
+      successEl.textContent = message;
+      successEl.classList.remove('hidden');
+      document.getElementById('error-message').classList.add('hidden');
+      
+      // 3秒後に自動で非表示
+      setTimeout(() => {
+        successEl.classList.add('hidden');
+      }, 3000);
+    }
+    
+    function showError(message) {
+      const errorEl = document.getElementById('error-message');
+      errorEl.textContent = message;
+      errorEl.classList.remove('hidden');
+      document.getElementById('success-message').classList.add('hidden');
+    }
+    
+    function showLoading() {
+      document.getElementById('loading-overlay').classList.remove('hidden');
+    }
+    
+    function hideLoading() {
+      document.getElementById('loading-overlay').classList.add('hidden');
+    }
+    
+    // リアルタイムバリデーション
+    function setupFormValidation() {
+      const form = document.getElementById('accounting-request-form');
+      const requiredFields = ['requester-name', 'brand', 'urgency', 'request-type', 'issue'];
+      
+      // 依頼種別変更時に推奨項目を更新
+      const requestTypeField = document.getElementById('request-type');
+      if (requestTypeField) {
+        requestTypeField.addEventListener('change', function() {
+          updateRecommendedFields('accounting', this.value);
+        });
+      }
+      
+      requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+          field.addEventListener('blur', function() {
+            validateField(field);
+          });
+          field.addEventListener('input', function() {
+            if (field.classList.contains('error')) {
+              validateField(field);
+            }
+          });
+        }
+      });
+    }
+    
+    function validateField(field) {
+      const value = field.value.trim();
+      const isRequired = field.hasAttribute('required');
+      const errorMsg = field.parentNode.querySelector('.form-error-message');
+      
+      if (isRequired && !value) {
+        field.classList.add('error');
+        if (!errorMsg) {
+          const msg = document.createElement('span');
+          msg.className = 'form-error-message';
+          msg.textContent = 'この項目は必須です';
+          field.parentNode.appendChild(msg);
+        }
+        return false;
+      } else {
+        field.classList.remove('error');
+        if (errorMsg) {
+          errorMsg.remove();
+        }
+        return true;
+      }
+    }
+    
+    function validateForm() {
+      const form = document.getElementById('accounting-request-form');
+      const requiredFields = ['requester-name', 'brand', 'urgency', 'request-type', 'issue'];
+      let isValid = true;
+      
+      requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field && !validateField(field)) {
+          isValid = false;
+        }
+      });
+      
+      return isValid;
+    }
+    
+    function submitAccountingRequest() {
+      const form = document.getElementById('accounting-request-form');
+      
+      // バリデーション
+      if (!validateForm()) {
+        showError('必須項目を入力してください');
+        // 最初のエラーフィールドにフォーカス
+        const firstError = form.querySelector('.form-control.error');
+        if (firstError) {
+          firstError.focus();
+        }
+        return;
+      }
+      
+      const formData = new FormData(form);
+      
+      showLoading();
+      hideMessages();
+      
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.disabled = true;
+      
+            // データをオブジェクトに変換
+            const requestData = {
+              requestType: 'accounting',
+              requesterName: formData.get('requesterName'),
+              brand: formData.get('brand'),
+              urgency: formData.get('urgency'),
+              requestTypeDetail: formData.get('requestType'),
+              desiredDate: formData.get('desiredDate') || null,
+              householdId: formData.get('householdId') || null,
+              studentNumber: formData.get('studentNumber') || null,
+              teacherNumber: formData.get('teacherNumber') || null,
+              requestMonth: formData.get('requestMonth') || null,
+              amount: formData.get('amount') || null,
+              issue: formData.get('issue'),
+              memo: formData.get('memo') || null
+            };
+      
+      // doPost経由で送信
+      const url = window.location.href.split('?')[0];
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          action: 'submit_request',
+          ...requestData
+        })
+      })
+      .then(response => response.json())
+      .then(result => {
+        hideLoading();
+        submitBtn.disabled = false;
+        
+        if (result && result.success) {
+          showSuccess('依頼を送信しました。依頼ID: ' + (result.requestId || ''));
+          form.reset();
+        } else {
+          showError(result.error || '送信に失敗しました');
+        }
+      })
+      .catch(error => {
+        hideLoading();
+        submitBtn.disabled = false;
+        showError('送信に失敗しました: ' + error.toString());
+      });
+    }
+    
+          /**
+           * 推奨項目を更新
+           */
+          function updateRecommendedFields(requestType, requestTypeDetail) {
+            if (!requestTypeDetail) {
+              document.getElementById('issue-help-text').textContent = '';
+              return;
+            }
+            
+            const url = window.location.href.split('?')[0];
+            fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                action: 'get_recommended_fields',
+                requestType: requestType,
+                requestTypeDetail: requestTypeDetail
+              })
+            })
+            .then(response => response.json())
+            .then(result => {
+              if (result && result.success && result.recommendations) {
+                const helpText = result.recommendations.helpText || '';
+                document.getElementById('issue-help-text').textContent = helpText;
+                
+                // 推奨項目をハイライト（オプション）
+                if (result.recommendations.recommendedFields) {
+                  result.recommendations.recommendedFields.forEach(fieldName => {
+                    const field = document.getElementById(fieldName);
+                    if (field) {
+                      field.parentNode.classList.add('recommended');
+                    }
+                  });
+                }
+              }
+            })
+            .catch(error => {
+              console.error('推奨項目取得エラー:', error);
+            });
+          }
+          
+          // グローバル関数として定義
+          window.submitAccountingRequest = submitAccountingRequest;
+          window.showSuccess = showSuccess;
+          window.showError = showError;
+          window.hideMessages = hideMessages;
+        </script>
+      </body>
+      </html>

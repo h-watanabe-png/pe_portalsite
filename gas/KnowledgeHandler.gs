@@ -11,19 +11,39 @@
  */
 function handleSearchKnowledge(e) {
   try {
-    const query = e.parameter.query || '';
-    const category = e.parameter.category || '';
-    const limit = parseInt(e.parameter.limit || '20');
+    // POSTデータから取得を試みる
+    let query = '';
+    let category = '';
+    let limit = 20;
+    
+    if (e.postData && e.postData.contents) {
+      try {
+        const postData = JSON.parse(e.postData.contents);
+        query = postData.query || e.parameter.query || '';
+        category = postData.category || e.parameter.category || '';
+        limit = parseInt(postData.limit || e.parameter.limit || '20');
+      } catch (parseError) {
+        // JSON解析に失敗した場合はparameterから取得
+        query = e.parameter.query || '';
+        category = e.parameter.category || '';
+        limit = parseInt(e.parameter.limit || '20');
+      }
+    } else {
+      // parameterから取得
+      query = e.parameter.query || '';
+      category = e.parameter.category || '';
+      limit = parseInt(e.parameter.limit || '20');
+    }
     
     const result = searchKnowledge(query, category, limit);
     
     return ContentService.createTextOutput(JSON.stringify(result))
       .setMimeType(ContentService.MimeType.JSON);
-  } catch (e) {
-    Logger.log('handleSearchKnowledge エラー: ' + e.toString());
+  } catch (err) {
+    Logger.log('handleSearchKnowledge エラー: ' + err.toString());
     return ContentService.createTextOutput(JSON.stringify({
       success: false,
-      error: '検索中にエラーが発生しました'
+      error: '検索中にエラーが発生しました: ' + err.toString()
     }))
       .setMimeType(ContentService.MimeType.JSON);
   }
@@ -36,13 +56,36 @@ function handleSearchKnowledge(e) {
  */
 function handleAddKnowledge(e) {
   try {
-    const requestData = JSON.parse(e.postData.contents || '{}');
+    let requestData = {};
+    
+    if (e.postData && e.postData.contents) {
+      requestData = JSON.parse(e.postData.contents);
+    } else if (e.parameter) {
+      // parameterから取得（フォールバック）
+      requestData = {
+        title: e.parameter.title || '',
+        category: e.parameter.category || '',
+        content: e.parameter.content || e.parameter.description || '',
+        tags: e.parameter.tags ? e.parameter.tags.split(',') : [],
+        fileId: e.parameter.fileId || ''
+      };
+    }
     
     const title = requestData.title || '';
     const category = requestData.category || '';
     const content = requestData.content || requestData.description || '';
-    const tags = requestData.tags || [];
+    const tags = Array.isArray(requestData.tags) ? requestData.tags : 
+                 (requestData.tags ? requestData.tags.split(',').map(t => t.trim()) : []);
     const fileId = requestData.fileId || '';
+    
+    // バリデーション
+    if (!title || !category || !content) {
+      return ContentService.createTextOutput(JSON.stringify({
+        success: false,
+        error: 'タイトル、カテゴリ、説明は必須です'
+      }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
     
     let result;
     if (fileId) {
@@ -55,11 +98,11 @@ function handleAddKnowledge(e) {
     
     return ContentService.createTextOutput(JSON.stringify(result))
       .setMimeType(ContentService.MimeType.JSON);
-  } catch (e) {
-    Logger.log('handleAddKnowledge エラー: ' + e.toString());
+  } catch (err) {
+    Logger.log('handleAddKnowledge エラー: ' + err.toString());
     return ContentService.createTextOutput(JSON.stringify({
       success: false,
-      error: 'ナレッジ追加中にエラーが発生しました'
+      error: 'ナレッジ追加中にエラーが発生しました: ' + err.toString()
     }))
       .setMimeType(ContentService.MimeType.JSON);
   }

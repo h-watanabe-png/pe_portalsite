@@ -2,10 +2,287 @@
 <html>
 <head>
   <base target="_top">
-  <title>依頼状況確認</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>依頼状況確認 - PEポータルサイト</title>
+  <link rel="stylesheet" href="common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h1>依頼状況確認</h1>
-  <!-- コンテンツ -->
+  <div class="container">
+    <!-- 固定ヘッダー -->
+    <header>
+      <h1>依頼状況確認</h1>
+      <div class="user-info">
+        <a href="?path=index" class="nav-link">ホームに戻る</a>
+      </div>
+    </header>
+    
+    <!-- メインコンテンツ -->
+    <main>
+      <!-- フィルターセクション -->
+      <section class="section">
+        <h2 class="section-title">フィルター</h2>
+        <div class="card">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+            <div class="form-group">
+              <label for="filter-status" class="form-label">ステータス</label>
+              <select id="filter-status" class="form-control">
+                <option value="">すべて</option>
+                <option value="未着手">未着手</option>
+                <option value="処理中">処理中</option>
+                <option value="保留">保留</option>
+                <option value="完了">完了</option>
+                <option value="キャンセル">キャンセル</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="filter-type" class="form-label">依頼種別</label>
+              <select id="filter-type" class="form-control">
+                <option value="">すべて</option>
+                <option value="system_team">システムチーム</option>
+                <option value="accounting">経理</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="filter-urgency" class="form-label">緊急度</label>
+              <select id="filter-urgency" class="form-control">
+                <option value="">すべて</option>
+                <option value="高">高</option>
+                <option value="中">中</option>
+                <option value="低">低</option>
+              </select>
+            </div>
+            
+            <div class="form-group" style="display: flex; align-items: flex-end;">
+              <button type="button" class="btn btn-primary" onclick="applyFilters()">フィルター適用</button>
+              <button type="button" class="btn btn-secondary" onclick="resetFilters()" style="margin-left: 8px;">リセット</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 依頼一覧 -->
+      <section class="section">
+        <h2 class="section-title">依頼一覧</h2>
+        <div class="card">
+          <div id="requests-container">
+            <div class="empty-state">
+              <div class="empty-state-icon">📭</div>
+              <div class="empty-state-message">読み込み中...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  
+  <!-- ローディングオーバーレイ -->
+  <div id="loading-overlay" class="loading-overlay hidden">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">読み込み中...</div>
+  </div>
+  
+  <script>
+    let allRequests = [];
+    let filteredRequests = [];
+    
+    // ページ読み込み時にデータを取得
+    window.addEventListener('DOMContentLoaded', function() {
+      loadRequests();
+    });
+    
+    /**
+     * 依頼一覧を読み込み
+     */
+    function loadRequests() {
+      showLoading();
+      
+      google.script.run
+        .withSuccessHandler(function(result) {
+          hideLoading();
+          
+          if (result && result.success) {
+            allRequests = result.requests || [];
+            applyFilters();
+          } else {
+            showError('依頼データの取得に失敗しました: ' + (result.error || ''));
+          }
+        })
+        .withFailureHandler(function(error) {
+          hideLoading();
+          showError('依頼データの取得に失敗しました: ' + error.toString());
+        })
+        .getMyRequests();
+    }
+    
+    /**
+     * フィルターを適用
+     */
+    function applyFilters() {
+      const statusFilter = document.getElementById('filter-status').value;
+      const typeFilter = document.getElementById('filter-type').value;
+      const urgencyFilter = document.getElementById('filter-urgency').value;
+      
+      filteredRequests = allRequests.filter(request => {
+        if (statusFilter && request.status !== statusFilter) return false;
+        if (typeFilter && request.requestType !== typeFilter) return false;
+        if (urgencyFilter && request.urgency !== urgencyFilter) return false;
+        return true;
+      });
+      
+      displayRequests(filteredRequests);
+    }
+    
+    /**
+     * フィルターをリセット
+     */
+    function resetFilters() {
+      document.getElementById('filter-status').value = '';
+      document.getElementById('filter-type').value = '';
+      document.getElementById('filter-urgency').value = '';
+      applyFilters();
+    }
+    
+    /**
+     * 依頼一覧を表示
+     */
+    function displayRequests(requests) {
+      const container = document.getElementById('requests-container');
+      
+      if (!requests || requests.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <div class="empty-state-message">依頼が見つかりませんでした</div>
+            <div class="empty-state-description">フィルター条件を変更して再度検索してください</div>
+          </div>
+        `;
+        return;
+      }
+      
+      let html = '<table class="data-table"><thead><tr>';
+      html += '<th>依頼ID</th><th>依頼種別</th><th>ブランド</th><th>緊急度</th><th>ステータス</th><th>受付日</th><th>操作</th>';
+      html += '</tr></thead><tbody>';
+      
+      requests.forEach(request => {
+        const statusClass = getStatusClass(request.status);
+        const urgencyClass = getUrgencyClass(request.urgency);
+        const typeLabel = request.requestType === 'system_team' ? 'システムチーム' : 
+                         request.requestType === 'accounting' ? '経理' : '';
+        
+        html += `<tr>`;
+        html += `<td data-label="依頼ID"><strong>${escapeHtml(request.requestId || '')}</strong></td>`;
+        html += `<td data-label="依頼種別">${escapeHtml(typeLabel)}</td>`;
+        html += `<td data-label="ブランド">${escapeHtml(request.brand || '')}</td>`;
+        html += `<td data-label="緊急度"><span class="badge ${urgencyClass}">${escapeHtml(request.urgency || '')}</span></td>`;
+        html += `<td data-label="ステータス"><span class="status-badge ${statusClass}">${escapeHtml(request.status || '')}</span></td>`;
+        html += `<td data-label="受付日">${formatDate(request.requestDate)}</td>`;
+        html += `<td data-label="操作"><button class="btn btn-secondary" onclick="viewRequestDetails('${escapeHtml(request.requestId || '')}')">詳細</button></td>`;
+        html += `</tr>`;
+      });
+      
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+    
+    /**
+     * ステータスに応じたクラスを取得
+     */
+    function getStatusClass(status) {
+      if (status === '完了') return 'completed';
+      if (status === '処理中') return 'processing';
+      if (status === '保留') return 'pending';
+      if (status === 'キャンセル') return 'cancelled';
+      return 'pending';
+    }
+    
+    /**
+     * 緊急度に応じたクラスを取得
+     */
+    function getUrgencyClass(urgency) {
+      if (urgency === '高') return 'badge-danger';
+      if (urgency === '中') return 'badge-warning';
+      if (urgency === '低') return 'badge-primary';
+      return 'badge-primary';
+    }
+    
+    /**
+     * 依頼詳細を表示
+     */
+    function viewRequestDetails(requestId) {
+      const request = allRequests.find(r => r.requestId === requestId);
+      if (!request) {
+        alert('依頼が見つかりませんでした');
+        return;
+      }
+      
+      // 詳細をモーダルまたは別ページで表示（簡易版：アラート）
+      const details = `
+依頼ID: ${request.requestId}
+依頼種別: ${request.requestType === 'system_team' ? 'システムチーム' : '経理'}
+ブランド: ${request.brand}
+緊急度: ${request.urgency}
+ステータス: ${request.status}
+受付日: ${formatDate(request.requestDate)}
+要約: ${request.summary || ''}
+      `;
+      
+      alert(details);
+    }
+    
+    /**
+     * エラーを表示
+     */
+    function showError(message) {
+      const container = document.getElementById('requests-container');
+      container.innerHTML = `
+        <div class="alert alert-error">
+          ${escapeHtml(message)}
+        </div>
+      `;
+    }
+    
+    /**
+     * ローディング表示
+     */
+    function showLoading() {
+      document.getElementById('loading-overlay').classList.remove('hidden');
+    }
+    
+    /**
+     * ローディング非表示
+     */
+    function hideLoading() {
+      document.getElementById('loading-overlay').classList.add('hidden');
+    }
+    
+    /**
+     * HTMLエスケープ
+     */
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    /**
+     * 日付フォーマット
+     */
+    function formatDate(date) {
+      if (!date) return '';
+      const d = new Date(date);
+      if (isNaN(d.getTime())) return '';
+      return d.toLocaleDateString('ja-JP', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+    }
+  </script>
 </body>
 </html>

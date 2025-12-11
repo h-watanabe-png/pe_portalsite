@@ -38,3 +38,6 @@ token.json
 credentials.json
 service_account.json
 md-csv-autodl-ed1adb38de50.json
+
+# Slack設定ファイル（機密情報）
+slack_config.json

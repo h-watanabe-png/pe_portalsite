@@ -6,64 +6,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FAQ・ヘルプ - PEポータルサイト</title>
   <link rel="stylesheet" href="common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
     .search-container {
-      margin-bottom: 30px;
+      margin-bottom: 32px;
     }
     
     .search-box {
       display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
+      gap: 12px;
+      margin-bottom: 16px;
     }
     
     .search-box input {
       flex: 1;
-      padding: 12px;
-      border: 1px solid #ddd;
+      padding: 12px 16px;
+      border: 1px solid #dadce0;
       border-radius: 4px;
       font-size: 16px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    
+    .search-box input:focus {
+      outline: none;
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
     }
     
     .search-box button {
       padding: 12px 24px;
-      background-color: #1976d2;
+      background: #1a73e8;
       color: white;
       border: none;
       border-radius: 4px;
-      font-size: 16px;
-      font-weight: bold;
+      font-size: 14px;
+      font-weight: 500;
       cursor: pointer;
+      transition: background-color 0.2s;
     }
     
     .search-box button:hover {
-      background-color: #1565c0;
+      background: #1557b0;
     }
     
     .filter-tabs {
       display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
+      gap: 8px;
+      margin-bottom: 24px;
       flex-wrap: wrap;
     }
     
     .filter-tab {
       padding: 8px 16px;
-      background-color: #f5f5f5;
-      border: 1px solid #ddd;
+      background: #ffffff;
+      border: 1px solid #dadce0;
       border-radius: 4px;
       cursor: pointer;
       transition: all 0.2s;
+      font-size: 14px;
+      font-weight: 500;
+      color: #202124;
     }
     
     .filter-tab:hover {
-      background-color: #e0e0e0;
+      background: #f8f9fa;
+      border-color: #1a73e8;
     }
     
     .filter-tab.active {
-      background-color: #1976d2;
+      background: #1a73e8;
       color: white;
-      border-color: #1976d2;
+      border-color: #1a73e8;
     }
     
     .search-results {
@@ -71,43 +86,63 @@
     }
     
     .result-item {
-      background: white;
-      padding: 20px;
+      background: #ffffff;
+      border: 1px solid #e8eaed;
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      margin-bottom: 15px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+      transition: box-shadow 0.2s;
+    }
+    
+    .result-item:hover {
+      box-shadow: 0 2px 6px rgba(60, 64, 67, 0.3), 0 2px 8px 2px rgba(60, 64, 67, 0.15);
     }
     
     .result-item h3 {
       margin-top: 0;
-      color: #1976d2;
+      margin-bottom: 12px;
+      color: #1a73e8;
+      font-size: 18px;
+      font-weight: 500;
+    }
+    
+    .result-item p {
+      color: #5f6368;
+      margin-bottom: 12px;
+      line-height: 1.6;
     }
     
     .result-item .result-meta {
       font-size: 12px;
-      color: #666;
-      margin-top: 10px;
+      color: #5f6368;
+      margin-top: 12px;
     }
     
     .result-item .result-tags {
-      margin-top: 10px;
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
     }
     
     .result-item .result-tag {
       display: inline-block;
-      padding: 4px 8px;
-      background-color: #e3f2fd;
-      color: #1976d2;
-      border-radius: 4px;
+      padding: 4px 12px;
+      background: #e8f0fe;
+      color: #1a73e8;
+      border-radius: 16px;
       font-size: 12px;
-      margin-right: 5px;
+      font-weight: 500;
     }
     
     .result-item .result-link {
       display: inline-block;
-      margin-top: 10px;
-      color: #1976d2;
+      margin-top: 12px;
+      color: #1a73e8;
       text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
     }
     
     .result-item .result-link:hover {
@@ -115,38 +150,20 @@
     }
     
     .add-knowledge-section {
-      margin-top: 40px;
-      padding: 20px;
-      background: #f8f9fa;
+      margin-top: 32px;
+      padding: 24px;
+      background: #ffffff;
+      border: 1px solid #e8eaed;
       border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
     }
     
     .add-knowledge-section h2 {
       margin-top: 0;
-    }
-    
-    .form-group {
-      margin-bottom: 15px;
-    }
-    
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-    
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-    
-    .form-group textarea {
-      min-height: 100px;
+      margin-bottom: 16px;
+      font-size: 20px;
+      font-weight: 500;
+      color: #202124;
     }
   </style>
 </head>
@@ -161,26 +178,37 @@
     
     <main>
       <section class="search-container">
-        <div class="search-box">
-          <input type="text" id="search-query" placeholder="キーワードで検索（ファイル名、タグ、説明など）" />
-          <button onclick="performSearch()">検索</button>
-        </div>
-        
-        <div class="filter-tabs">
-          <div class="filter-tab active" data-category="" onclick="filterByCategory('')">すべて</div>
-          <div class="filter-tab" data-category="システム" onclick="filterByCategory('システム')">システム</div>
-          <div class="filter-tab" data-category="経理" onclick="filterByCategory('経理')">経理</div>
-          <div class="filter-tab" data-category="その他" onclick="filterByCategory('その他')">その他</div>
+        <h2 class="section-title">ナレッジ検索</h2>
+        <div class="card">
+          <div class="search-box">
+            <input type="text" id="search-query" placeholder="キーワードで検索（ファイル名、タグ、説明など）" />
+            <button onclick="performSearch()">検索</button>
+          </div>
+          
+          <div class="filter-tabs">
+            <div class="filter-tab active" data-category="" onclick="filterByCategory('')">すべて</div>
+            <div class="filter-tab" data-category="システム" onclick="filterByCategory('システム')">システム</div>
+            <div class="filter-tab" data-category="経理" onclick="filterByCategory('経理')">経理</div>
+            <div class="filter-tab" data-category="その他" onclick="filterByCategory('その他')">その他</div>
+          </div>
         </div>
       </section>
       
-      <section class="search-results" id="search-results">
-        <p>検索キーワードを入力して検索してください。</p>
+      <section class="section">
+        <h2 class="section-title">検索結果</h2>
+        <div class="card">
+          <div id="search-results">
+            <div class="empty-state">
+              <div class="empty-state-icon">🔍</div>
+              <div class="empty-state-message">検索キーワードを入力して検索してください</div>
+            </div>
+          </div>
+        </div>
       </section>
       
-      <section class="add-knowledge-section">
-        <h2>ナレッジを追加</h2>
-        <p>Google Driveのファイルやナレッジを追加して、他のユーザーと共有できます。</p>
+      <section class="section add-knowledge-section">
+        <h2 class="section-title">ナレッジを追加</h2>
+        <p style="color: #5f6368; margin-bottom: 24px;">Google Driveのファイルやナレッジを追加して、他のユーザーと共有できます。</p>
         
         <form id="add-knowledge-form">
           <div class="form-group">
@@ -227,15 +255,16 @@
     function performSearch() {
       const query = document.getElementById('search-query').value.trim();
       
-      if (!query) {
-        alert('検索キーワードを入力してください');
+      if (!query || query.length < 2) {
+        showError('検索キーワードを2文字以上入力してください');
         return;
       }
       
       showLoading();
       
       // POSTリクエストで検索
-      fetch(window.location.href.replace('?path=faq-help', ''), {
+      const url = window.location.href.split('?')[0];
+      fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -247,9 +276,17 @@
           limit: 50
         })
       })
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('検索リクエストが失敗しました');
+        }
+        return response.json();
+      })
       .then(result => displaySearchResults(result))
-      .catch(error => showError(error.toString()));
+      .catch(error => {
+        console.error('検索エラー:', error);
+        showError('検索中にエラーが発生しました: ' + error.toString());
+      });
     }
     
     // カテゴリでフィルタ
@@ -324,6 +361,14 @@
               <div class="result-meta">
                 カテゴリ: ${knowledge.category} | 更新日: ${formatDate(knowledge.updatedAt)}
               </div>
+              <div class="result-feedback" style="margin-top: 8px;">
+                <button class="btn-feedback" onclick="saveFAQFeedback('${knowledge.id}', '${escapeHtml(result.query)}', true)" title="役に立ちました">
+                  👍
+                </button>
+                <button class="btn-feedback" onclick="saveFAQFeedback('${knowledge.id}', '${escapeHtml(result.query)}', false)" title="役に立ちませんでした">
+                  👎
+                </button>
+              </div>
             </div>
           `;
         });
@@ -341,6 +386,14 @@
                 ${faq.tags.map(tag => `<span class="result-tag">${escapeHtml(tag)}</span>`).join('')}
               </div>
               ${faq.link ? `<a href="${faq.link}" target="_blank" class="result-link">詳細を見る →</a>` : ''}
+              <div class="result-feedback" style="margin-top: 8px;">
+                <button class="btn-feedback" onclick="saveFAQFeedback('${faq.id}', '${escapeHtml(result.query)}', true)" title="役に立ちました">
+                  👍
+                </button>
+                <button class="btn-feedback" onclick="saveFAQFeedback('${faq.id}', '${escapeHtml(result.query)}', false)" title="役に立ちませんでした">
+                  👎
+                </button>
+              </div>
             </div>
           `;
         });
@@ -363,7 +416,7 @@
       const tags = document.getElementById('knowledge-tags').value.split(',').map(t => t.trim()).filter(t => t);
       
       if (!title || !category || !description) {
-        alert('タイトル、カテゴリ、説明は必須です');
+        showError('タイトル、カテゴリ、説明は必須です');
         return;
       }
       
@@ -379,9 +432,8 @@
         fileId: fileId
       };
       
-      const payload = JSON.stringify(requestData);
-      
-      fetch(window.location.href.replace('?path=faq-help', ''), {
+      const url = window.location.href.split('?')[0];
+      fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -391,29 +443,55 @@
           ...requestData
         })
       })
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('ナレッジ追加リクエストが失敗しました');
+        }
+        return response.json();
+      })
       .then(result => onKnowledgeAdded(result))
-      .catch(error => showError(error.toString()));
+      .catch(error => {
+        console.error('ナレッジ追加エラー:', error);
+        showError('ナレッジ追加中にエラーが発生しました: ' + error.toString());
+      });
     }
     
     function onKnowledgeAdded(result) {
       hideLoading();
       
-      if (result.success) {
-        alert('ナレッジを追加しました');
+      if (result && result.success) {
+        // 成功メッセージを表示
+        const successMsg = document.createElement('div');
+        successMsg.className = 'alert alert-success';
+        successMsg.textContent = 'ナレッジを追加しました';
+        const form = document.getElementById('add-knowledge-form');
+        form.parentNode.insertBefore(successMsg, form);
+        
+        // 3秒後に非表示
+        setTimeout(() => {
+          successMsg.remove();
+        }, 3000);
+        
         document.getElementById('add-knowledge-form').reset();
+        
         // 検索を再実行（オプション）
         const query = document.getElementById('search-query').value.trim();
         if (query) {
           performSearch();
         }
       } else {
-        alert('エラー: ' + result.error);
+        showError(result.error || 'ナレッジ追加に失敗しました');
       }
     }
     
     function showLoading() {
-      document.getElementById('search-results').innerHTML = '<p>検索中...</p>';
+      const container = document.getElementById('search-results');
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="loading-spinner" style="margin: 0 auto;"></div>
+          <div class="empty-state-message" style="margin-top: 16px;">検索中...</div>
+        </div>
+      `;
     }
     
     function hideLoading() {
@@ -422,9 +500,16 @@
     
     function showError(error) {
       hideLoading();
-      document.getElementById('search-results').innerHTML = 
-        `<div class="error">エラーが発生しました: ${escapeHtml(error)}</div>`;
+      const container = document.getElementById('search-results');
+      container.innerHTML = `
+        <div class="alert alert-error">
+          <strong>エラー</strong>: ${escapeHtml(error)}
+        </div>
+      `;
     }
+    
+    // グローバルにエラー表示関数を公開（ナレッジ追加フォームからも使用）
+    window.showError = showError;
     
     function escapeHtml(text) {
       const div = document.createElement('div');

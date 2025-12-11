@@ -6,110 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>システムチームへの依頼 - PEポータルサイト</title>
   <link rel="stylesheet" href="common.css">
-  <style>
-    .form-container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    
-    .form-group {
-      margin-bottom: 20px;
-    }
-    
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-      color: #333;
-    }
-    
-    .form-group label.required::after {
-      content: ' *';
-      color: #d32f2f;
-    }
-    
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-      font-family: 'Noto Sans JP', sans-serif;
-    }
-    
-    .form-group textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-    
-    .form-group input[type="file"] {
-      padding: 5px;
-    }
-    
-    .form-actions {
-      margin-top: 30px;
-      text-align: center;
-    }
-    
-    .btn {
-      padding: 12px 24px;
-      border: none;
-      border-radius: 4px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-    
-    .btn-primary {
-      background-color: #1976d2;
-      color: white;
-    }
-    
-    .btn-primary:hover {
-      background-color: #1565c0;
-    }
-    
-    .btn-primary:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-    
-    .btn-secondary {
-      background-color: #666;
-      color: white;
-    }
-    
-    .btn-secondary:hover {
-      background-color: #555;
-    }
-    
-    .error-message {
-      color: #d32f2f;
-      font-size: 14px;
-      margin-top: 5px;
-    }
-    
-    .success-message {
-      background-color: #e8f5e9;
-      color: #2e7d32;
-      padding: 15px;
-      border-radius: 4px;
-      margin-bottom: 20px;
-    }
-    
-    .help-text {
-      font-size: 12px;
-      color: #666;
-      margin-top: 5px;
-    }
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
+    <!-- 固定ヘッダー -->
     <header>
       <h1>システムチームへの依頼</h1>
       <div class="user-info">
@@ -117,108 +20,149 @@
       </div>
     </header>
     
+    <!-- メインコンテンツ -->
     <main>
-      <div id="success-message" class="success-message" style="display: none;"></div>
-      
-      <form id="system-team-request-form" class="form-container">
-        <div class="form-group">
-          <label for="requester-name" class="required">依頼者氏名</label>
-          <input type="text" id="requester-name" name="requesterName" required>
+      <section class="section">
+        <h2 class="section-title">依頼フォーム</h2>
+        <div class="card">
+          <div id="success-message" class="alert alert-success hidden"></div>
+          <div id="error-message" class="alert alert-error hidden"></div>
+          
+          <form id="system-team-request-form">
+            <div class="form-group">
+              <label for="requester-name" class="form-label required">依頼者氏名</label>
+              <input type="text" id="requester-name" name="requesterName" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="brand" class="form-label required">ブランド</label>
+              <select id="brand" name="brand" class="form-control" required>
+                <option value="">選択してください</option>
+                <option value="PE">PE</option>
+                <option value="EDUBAL">EDUBAL</option>
+                <option value="その他">その他</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="request-type-detail" class="form-label required">依頼種別</label>
+              <select id="request-type-detail" name="requestTypeDetail" class="form-control" required>
+                <option value="">選択してください</option>
+                <option value="エラー対応">エラー対応</option>
+                <option value="修正・改修">修正・改修</option>
+                <option value="設定・セッティング">設定・セッティング</option>
+                <option value="権限設定">権限設定</option>
+                <option value="データ修正">データ修正</option>
+                <option value="面接関連">面接関連</option>
+                <option value="選考関連">選考関連</option>
+                <option value="PC設定">PC設定</option>
+                <option value="システム不具合">システム不具合</option>
+                <option value="その他">その他</option>
+              </select>
+              <div class="help-text">依頼の種類を選択してください</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="urgency" class="form-label required">緊急度</label>
+              <select id="urgency" name="urgency" class="form-control" required>
+                <option value="">選択してください</option>
+                <option value="高">高</option>
+                <option value="中">中</option>
+                <option value="低">低</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="desired-date" class="form-label">対応希望日</label>
+              <input type="date" id="desired-date" name="desiredDate" class="form-control">
+              <div class="help-text">希望する対応日を選択してください（任意）</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="household-id" class="form-label">世帯ID</label>
+              <input type="text" id="household-id" name="householdId" class="form-control">
+              <div class="help-text">該当する世帯IDがある場合に入力してください（任意）</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="student-number" class="form-label">生徒番号</label>
+              <input type="text" id="student-number" name="studentNumber" class="form-control">
+              <div class="help-text">該当する生徒番号がある場合に入力してください（任意）</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="selection-number" class="form-label">選考番号</label>
+              <input type="text" id="selection-number" name="selectionNumber" class="form-control">
+              <div class="help-text">該当する選考番号がある場合に入力してください（任意）</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="teacher-number" class="form-label">教師番号</label>
+              <input type="text" id="teacher-number" name="teacherNumber" class="form-control">
+              <div class="help-text">該当する教師番号がある場合に入力してください（任意）</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="issue" class="form-label required">発生している問題</label>
+              <textarea id="issue" name="issue" class="form-control" required placeholder="発生している問題を詳しく記入してください"></textarea>
+              <div class="help-text" id="issue-help-text"></div>
+            </div>
+            
+            <div class="form-group">
+              <label for="desired-action" class="form-label">希望の対応</label>
+              <textarea id="desired-action" name="desiredAction" class="form-control" placeholder="希望する対応内容を記入してください（任意）"></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="frequency" class="form-label">発生頻度</label>
+              <select id="frequency" name="frequency" class="form-control">
+                <option value="">選択してください</option>
+                <option value="初回">初回</option>
+                <option value="時々">時々</option>
+                <option value="頻繁">頻繁</option>
+                <option value="常時">常時</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="error-message" class="form-label">エラー文・URL</label>
+              <textarea id="error-message" name="errorMessage" class="form-control" placeholder="エラーメッセージや関連URLがある場合に入力してください（任意）"></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="file-attachment" class="form-label">ファイル添付</label>
+              <input type="file" id="file-attachment" name="fileAttachment" class="form-control" multiple>
+              <div class="help-text">関連するファイルがある場合に添付してください（任意、複数選択可）</div>
+            </div>
+            
+            <div class="form-group">
+              <label for="memo" class="form-label">備考</label>
+              <textarea id="memo" name="memo" class="form-control" placeholder="その他の情報があれば記入してください（任意）"></textarea>
+            </div>
+            
+            <div class="form-group" style="display: flex; gap: 12px;">
+              <button type="submit" class="btn btn-primary" id="submit-btn">送信</button>
+              <button type="button" class="btn btn-secondary" onclick="resetForm()">リセット</button>
+            </div>
+          </form>
         </div>
-        
-        <div class="form-group">
-          <label for="brand" class="required">ブランド</label>
-          <select id="brand" name="brand" required>
-            <option value="">選択してください</option>
-            <option value="PE">PE</option>
-            <option value="EDUBAL">EDUBAL</option>
-            <option value="その他">その他</option>
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label for="urgency" class="required">緊急度</label>
-          <select id="urgency" name="urgency" required>
-            <option value="">選択してください</option>
-            <option value="高">高</option>
-            <option value="中">中</option>
-            <option value="低">低</option>
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label for="desired-date">対応希望日</label>
-          <input type="date" id="desired-date" name="desiredDate">
-          <div class="help-text">希望する対応日を選択してください（任意）</div>
-        </div>
-        
-        <div class="form-group">
-          <label for="household-id">世帯ID</label>
-          <input type="text" id="household-id" name="householdId">
-          <div class="help-text">該当する世帯IDがある場合に入力してください（任意）</div>
-        </div>
-        
-        <div class="form-group">
-          <label for="student-number">生徒番号</label>
-          <input type="text" id="student-number" name="studentNumber">
-          <div class="help-text">該当する生徒番号がある場合に入力してください（任意）</div>
-        </div>
-        
-        <div class="form-group">
-          <label for="selection-number">選考番号</label>
-          <input type="text" id="selection-number" name="selectionNumber">
-          <div class="help-text">該当する選考番号がある場合に入力してください（任意）</div>
-        </div>
-        
-        <div class="form-group">
-          <label for="issue" class="required">発生している問題</label>
-          <textarea id="issue" name="issue" required placeholder="発生している問題を詳しく記入してください"></textarea>
-        </div>
-        
-        <div class="form-group">
-          <label for="desired-action">希望の対応</label>
-          <textarea id="desired-action" name="desiredAction" placeholder="希望する対応内容を記入してください（任意）"></textarea>
-        </div>
-        
-        <div class="form-group">
-          <label for="frequency">発生頻度</label>
-          <select id="frequency" name="frequency">
-            <option value="">選択してください</option>
-            <option value="初回">初回</option>
-            <option value="時々">時々</option>
-            <option value="頻繁">頻繁</option>
-            <option value="常時">常時</option>
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label for="error-message">エラー文・URL</label>
-          <textarea id="error-message" name="errorMessage" placeholder="エラーメッセージや関連URLがある場合に入力してください（任意）"></textarea>
-        </div>
-        
-        <div class="form-group">
-          <label for="file-attachment">ファイル添付</label>
-          <input type="file" id="file-attachment" name="fileAttachment" multiple>
-          <div class="help-text">関連するファイルがある場合に添付してください（任意、複数選択可）</div>
-        </div>
-        
-        <div class="form-group">
-          <label for="memo">備考</label>
-          <textarea id="memo" name="memo" placeholder="その他の情報があれば記入してください（任意）"></textarea>
-        </div>
-        
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary" id="submit-btn">送信</button>
-          <button type="button" class="btn btn-secondary" onclick="resetForm()">リセット</button>
-        </div>
-        
-        <div id="error-message" class="error-message" style="display: none;"></div>
-      </form>
+      </section>
     </main>
+  </div>
+  
+  <!-- ローディングオーバーレイ -->
+  <div id="loading-overlay" class="loading-overlay hidden">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">送信中...</div>
   </div>
   
   <script src="form-handler.js"></script>
   <script>
+    // ページ読み込み時にバリデーションを設定
+    window.addEventListener('DOMContentLoaded', function() {
+      setupFormValidation();
+    });
+    
     // フォーム送信処理
     document.getElementById('system-team-request-form').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -231,17 +175,330 @@
     }
     
     function hideMessages() {
-      const successMsg = document.getElementById('success-message');
-      const errorMsg = document.getElementById('error-message');
-      if (successMsg) successMsg.style.display = 'none';
-      if (errorMsg) errorMsg.style.display = 'none';
+      document.getElementById('success-message').classList.add('hidden');
+      document.getElementById('error-message').classList.add('hidden');
     }
     
-    // グローバル関数として定義（form-handler.jsから呼び出される）
-    window.submitSystemTeamRequest = submitSystemTeamRequest;
-    window.showSuccess = showSuccess;
-    window.showError = showError;
-    window.hideMessages = hideMessages;
-  </script>
-</body>
-</html>
+    function showSuccess(message) {
+      const successEl = document.getElementById('success-message');
+      successEl.textContent = message;
+      successEl.classList.remove('hidden');
+      document.getElementById('error-message').classList.add('hidden');
+      
+      // 3秒後に自動で非表示
+      setTimeout(() => {
+        successEl.classList.add('hidden');
+      }, 3000);
+    }
+    
+    function showError(message) {
+      const errorEl = document.getElementById('error-message');
+      errorEl.textContent = message;
+      errorEl.classList.remove('hidden');
+      document.getElementById('success-message').classList.add('hidden');
+    }
+    
+    function showLoading() {
+      document.getElementById('loading-overlay').classList.remove('hidden');
+    }
+    
+    function hideLoading() {
+      document.getElementById('loading-overlay').classList.add('hidden');
+    }
+    
+    // リアルタイムバリデーション
+    function setupFormValidation() {
+      const form = document.getElementById('system-team-request-form');
+      const requiredFields = ['requester-name', 'brand', 'request-type-detail', 'urgency', 'issue'];
+      
+      // 依頼種別変更時に推奨項目を更新
+      const requestTypeDetailField = document.getElementById('request-type-detail');
+      if (requestTypeDetailField) {
+        requestTypeDetailField.addEventListener('change', function() {
+          updateRecommendedFields('system_team', this.value);
+        });
+      }
+      
+      requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+          field.addEventListener('blur', function() {
+            validateField(field);
+          });
+          field.addEventListener('input', function() {
+            if (field.classList.contains('error')) {
+              validateField(field);
+            }
+          });
+        }
+      });
+    }
+    
+    function validateField(field) {
+      const value = field.value.trim();
+      const isRequired = field.hasAttribute('required');
+      const errorMsg = field.parentNode.querySelector('.form-error-message');
+      
+      if (isRequired && !value) {
+        field.classList.add('error');
+        if (!errorMsg) {
+          const msg = document.createElement('span');
+          msg.className = 'form-error-message';
+          msg.textContent = 'この項目は必須です';
+          field.parentNode.appendChild(msg);
+        }
+        return false;
+      } else {
+        field.classList.remove('error');
+        if (errorMsg) {
+          errorMsg.remove();
+        }
+        return true;
+      }
+    }
+    
+    function validateForm() {
+      const form = document.getElementById('system-team-request-form');
+      const requiredFields = ['requester-name', 'brand', 'request-type-detail', 'urgency', 'issue'];
+      let isValid = true;
+      
+      requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field && !validateField(field)) {
+          isValid = false;
+        }
+      });
+      
+      return isValid;
+    }
+    
+    function submitSystemTeamRequest() {
+      const form = document.getElementById('system-team-request-form');
+      
+      // バリデーション
+      if (!validateForm()) {
+        showError('必須項目を入力してください');
+        // 最初のエラーフィールドにフォーカス
+        const firstError = form.querySelector('.form-control.error');
+        if (firstError) {
+          firstError.focus();
+        }
+        return;
+      }
+      
+      const formData = new FormData(form);
+      
+      showLoading();
+      hideMessages();
+      
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.disabled = true;
+      
+      // データをオブジェクトに変換
+      const requestData = {
+        requestType: 'system_team',
+        requesterName: formData.get('requesterName'),
+        brand: formData.get('brand'),
+        requestTypeDetail: formData.get('requestTypeDetail') || null,
+        urgency: formData.get('urgency'),
+        desiredDate: formData.get('desiredDate') || null,
+        householdId: formData.get('householdId') || null,
+        studentNumber: formData.get('studentNumber') || null,
+        selectionNumber: formData.get('selectionNumber') || null,
+        teacherNumber: formData.get('teacherNumber') || null,
+        issue: formData.get('issue'),
+        desiredAction: formData.get('desiredAction') || null,
+        frequency: formData.get('frequency') || null,
+        errorMessage: formData.get('errorMessage') || null,
+        hasAttachment: formData.get('fileAttachment') ? true : false,
+        memo: formData.get('memo') || null
+      };
+      
+      // doPost経由で送信
+      const url = window.location.href.split('?')[0];
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          action: 'submit_request',
+          ...requestData
+        })
+      })
+      .then(response => response.json())
+      .then(result => {
+        hideLoading();
+        submitBtn.disabled = false;
+        
+        if (result && result.success) {
+          showSuccess('依頼を送信しました。依頼ID: ' + (result.requestId || ''));
+          
+          // 自動仕分けされた場合は、フィードバックを求める
+          if (result.needsFeedback && result.classificationResult) {
+            showClassificationFeedback(result.requestId, result.classificationResult);
+          }
+          
+          form.reset();
+        } else {
+          if (result && result.needsConfirmation) {
+            // 依頼先の確認を求める
+            showClassificationConfirmation(result.classificationResult);
+          } else {
+            showError(result.error || '送信に失敗しました');
+          }
+        }
+      })
+      .catch(error => {
+        hideLoading();
+        submitBtn.disabled = false;
+        showError('送信に失敗しました: ' + error.toString());
+      });
+    }
+    
+          /**
+           * 推奨項目を更新
+           */
+          function updateRecommendedFields(requestType, requestTypeDetail) {
+            if (!requestTypeDetail) {
+              document.getElementById('issue-help-text').textContent = '';
+              return;
+            }
+            
+            const url = window.location.href.split('?')[0];
+            fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                action: 'get_recommended_fields',
+                requestType: requestType,
+                requestTypeDetail: requestTypeDetail
+              })
+            })
+            .then(response => response.json())
+            .then(result => {
+              if (result && result.success && result.recommendations) {
+                const helpText = result.recommendations.helpText || '';
+                document.getElementById('issue-help-text').textContent = helpText;
+                
+                // 推奨項目をハイライト（オプション）
+                if (result.recommendations.recommendedFields) {
+                  result.recommendations.recommendedFields.forEach(fieldName => {
+                    const field = document.getElementById(fieldName);
+                    if (field) {
+                      field.parentNode.classList.add('recommended');
+                    }
+                  });
+                }
+              }
+            })
+            .catch(error => {
+              console.error('推奨項目取得エラー:', error);
+            });
+          }
+          
+          // 自動仕分けのフィードバックを表示
+          function showClassificationFeedback(requestId, classificationResult) {
+            const feedbackDiv = document.createElement('div');
+            feedbackDiv.className = 'alert alert-info';
+            feedbackDiv.style.marginTop = '16px';
+            feedbackDiv.innerHTML = `
+              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 200px;">
+                  <strong>自動仕分け:</strong> この依頼は「${classificationResult.suggestedType === 'system_team' ? 'システムチーム' : '経理'}」に自動仕分けされました。
+                  <br>
+                  <small>この仕分けは正しいですか？</small>
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 8px;">
+                  <button class="btn btn-success" onclick="saveClassificationFeedback('${requestId}', '${classificationResult.suggestedType}', true, '')" style="padding: 6px 16px;">
+                    はい
+                  </button>
+                  <button class="btn btn-secondary" onclick="showClassificationCorrection('${requestId}', '${classificationResult.suggestedType}')" style="padding: 6px 16px;">
+                    いいえ
+                  </button>
+                </div>
+              </div>
+            `;
+            
+            const form = document.getElementById('system-team-request-form');
+            form.parentNode.insertBefore(feedbackDiv, form.nextSibling);
+            
+            // 30秒後に自動で非表示
+            setTimeout(() => {
+              if (feedbackDiv.parentNode) {
+                feedbackDiv.remove();
+              }
+            }, 30000);
+          }
+          
+          // 自動仕分けの修正を表示
+          function showClassificationCorrection(requestId, suggestedType) {
+            const correctionDiv = document.createElement('div');
+            correctionDiv.className = 'alert alert-warning';
+            correctionDiv.style.marginTop = '16px';
+            correctionDiv.innerHTML = `
+              <div>
+                <strong>正しい依頼先を選択してください:</strong>
+                <div style="margin-top: 8px; display: flex; gap: 8px;">
+                  <button class="btn btn-primary" onclick="saveClassificationFeedback('${requestId}', '${suggestedType}', false, 'system_team')" style="padding: 6px 16px;">
+                    システムチーム
+                  </button>
+                  <button class="btn btn-primary" onclick="saveClassificationFeedback('${requestId}', '${suggestedType}', false, 'accounting')" style="padding: 6px 16px;">
+                    経理
+                  </button>
+                </div>
+              </div>
+            `;
+            
+            const form = document.getElementById('system-team-request-form');
+            form.parentNode.insertBefore(correctionDiv, form.nextSibling);
+          }
+          
+          // 自動仕分けのフィードバックを保存
+          function saveClassificationFeedback(requestId, suggestedType, isCorrect, correctType) {
+            const url = window.location.href.split('?')[0];
+            fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                action: 'save_classification_feedback',
+                requestId: requestId,
+                suggestedType: suggestedType,
+                isCorrect: isCorrect,
+                correctType: correctType
+              })
+            })
+            .then(response => response.json())
+            .then(result => {
+              if (result && result.success) {
+                // フィードバック表示を削除
+                const alerts = document.querySelectorAll('.alert-info, .alert-warning');
+                alerts.forEach(alert => {
+                  if (alert.textContent.includes('自動仕分け') || alert.textContent.includes('正しい依頼先')) {
+                    alert.remove();
+                  }
+                });
+                
+                // 成功メッセージを表示
+                showSuccess('フィードバックを保存しました。ありがとうございます！');
+              }
+            })
+            .catch(error => {
+              console.error('フィードバック保存エラー:', error);
+            });
+          }
+          
+          // グローバル関数として定義（form-handler.jsから呼び出される）
+          window.submitSystemTeamRequest = submitSystemTeamRequest;
+          window.showSuccess = showSuccess;
+          window.showError = showError;
+          window.hideMessages = hideMessages;
+          window.showClassificationFeedback = showClassificationFeedback;
+          window.saveClassificationFeedback = saveClassificationFeedback;
+        </script>
+      </body>
+      </html>

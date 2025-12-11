@@ -5,7 +5,7 @@
  */
 
 /**
- * 依頼送信を処理
+ * 依頼送信を処理（doPost経由）
  * @param {Object} e - リクエストパラメータ
  * @return {ContentService.TextOutput} JSONレスポンス
  */
@@ -23,15 +23,49 @@ function handleSubmitRequest(e) {
     // リクエストデータを取得
     let requestType, requestData;
     
-    if (e.parameter.requestType) {
+    if (e.parameter && e.parameter.requestType) {
       // URLパラメータから取得
       requestType = e.parameter.requestType;
-      requestData = JSON.parse(e.postData.contents || '{}');
-    } else {
+      requestData = e.postData ? JSON.parse(e.postData.contents || '{}') : {};
+    } else if (e.postData && e.postData.contents) {
       // POSTデータから取得
-      const postData = JSON.parse(e.postData.contents || '{}');
+      const postData = JSON.parse(e.postData.contents);
       requestType = postData.requestType || 'system_team';
       requestData = postData.data || postData;
+      
+      // 自動仕分け機能（requestTypeが指定されていない場合）
+      if (!postData.requestType && requestData.issue) {
+        const classification = classifyRequest(
+          requestData.issue || '',
+          requestData.requestTypeDetail || '',
+          requestData.brand || '',
+          requestData.householdId || '',
+          requestData.studentNumber || '',
+          requestData.selectionNumber || '',
+          requestData.teacherNumber || ''
+        );
+        
+        // 信頼度が高い場合（0.7以上）は自動仕分け、それ以外はユーザーに確認
+        if (classification.confidence >= 0.7) {
+          requestType = classification.suggestedType;
+          requestData.autoClassified = true;
+          requestData.classificationResult = classification;
+          requestData.needsFeedback = true; // フィードバックを求めるフラグ
+        } else {
+          // 信頼度が低い場合は、ユーザーに確認を求める
+          return ContentService.createTextOutput(JSON.stringify({
+            success: false,
+            needsConfirmation: true,
+            classificationResult: classification,
+            message: '依頼先を自動判定できませんでした。システムチームまたは経理を選択してください。'
+          }))
+            .setMimeType(ContentService.MimeType.JSON);
+        }
+      }
+    } else {
+      // 直接呼び出しの場合（google.script.run経由）
+      requestType = e.requestType || 'system_team';
+      requestData = e;
     }
     
     // データ検証
@@ -50,25 +84,34 @@ function handleSubmitRequest(e) {
     try {
       const slackResult = sendSlackNotificationEnhanced({
         requestId: requestId,
-        requesterName: data.requesterName || authResult.userEmail,
-        brand: data.brand || '',
-        urgency: data.urgency || '中',
-        issue: data.issue || data.requestContent || '',
+        requesterName: requestData.requesterName || authResult.userEmail,
+        brand: requestData.brand || '',
+        urgency: requestData.urgency || '中',
+        issue: requestData.issue || requestData.requestContent || '',
         requestId: requestId
       }, 'new_request', requestType);
       
-      if (slackResult.success) {
+      if (slackResult && slackResult.success) {
         Logger.log(`Slack通知を送信しました: ${requestId}`);
       }
     } catch (e) {
       Logger.log('Slack通知送信エラー（処理は継続）: ' + e.toString());
     }
     
-    return ContentService.createTextOutput(JSON.stringify({
+    // レスポンスを作成
+    const response = {
       success: true,
       requestId: requestId,
       message: '依頼を送信しました。'
-    }))
+    };
+    
+    // 自動仕分けされた場合は、フィードバック情報を含める
+    if (requestData.needsFeedback && requestData.classificationResult) {
+      response.needsFeedback = true;
+      response.classificationResult = requestData.classificationResult;
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify(response))
       .setMimeType(ContentService.MimeType.JSON);
       
   } catch (e) {
@@ -152,10 +195,10 @@ function validateRequestData(data, requestType) {
   // リクエストタイプに応じた検証
   if (requestType === 'system_team') {
     // システムチーム依頼の必須項目
-    return !!(data.requesterName && data.brand && data.issue);
+    return !!(data.requesterName && data.brand && data.requestTypeDetail && data.urgency && data.issue);
   } else if (requestType === 'accounting') {
     // 経理依頼の必須項目
-    return !!(data.requesterName && data.brand && data.requestContent);
+    return !!(data.requesterName && data.brand && data.requestTypeDetail && data.urgency && data.issue);
   }
   
   return false;
@@ -185,11 +228,15 @@ function saveRequest(data, requestType, userEmail) {
     now, // 送信日時
     data.requesterName || userEmail, // 依頼者氏名
     data.brand || '', // ブランド
+    data.requestTypeDetail || '', // 依頼種別（詳細）
     data.urgency || '中', // 緊急度
     data.desiredDate || '', // 対応希望日
     data.householdId || '', // 世帯ID
     data.studentNumber || '', // 生徒番号
     data.selectionNumber || '', // 選考番号
+    data.teacherNumber || '', // 教師番号（新規追加）
+    data.requestMonth || '', // 請求月（経理のみ、新規追加）
+    data.amount || '', // 金額（経理のみ、新規追加）
     data.issue || data.requestContent || '', // 発生している問題 / 依頼内容詳細
     data.desiredAction || '', // 希望の対応
     data.frequency || '', // 発生頻度
@@ -210,7 +257,23 @@ function saveRequest(data, requestType, userEmail) {
   // 統合管理シートにも追加
   addToIntegratedManagement(requestId, requestType, data, userEmail, now);
   
-  return requestId;
+  // スナップショットキャッシュを無効化
+  invalidateSnapshotCache('依頼_統合管理');
+  invalidateSnapshotCache(sheetName);
+  
+  // レスポンスに自動仕分け情報を含める
+  const response = {
+    success: true,
+    requestId: requestId,
+    message: '依頼を送信しました'
+  };
+  
+  if (requestData.autoClassified && requestData.classificationResult) {
+    response.needsFeedback = true;
+    response.classificationResult = requestData.classificationResult;
+  }
+  
+  return response;
 }
 
 /**
@@ -283,6 +346,9 @@ function updateRequestStatus(requestId, status, memo, userEmail) {
       sheet.getRange(rowIndex, updatedByCol).setValue(userEmail);
       sheet.getRange(rowIndex, updatedAtCol).setValue(new Date());
       
+      // スナップショットキャッシュを無効化
+      invalidateSnapshotCache('依頼_統合管理');
+      
       return true;
     }
   }
@@ -337,6 +403,166 @@ function processNotification() {
     Logger.log(`通知を送信しました: ${notificationData.requestId}`);
   } catch (e) {
     Logger.log('通知送信エラー: ' + e.toString());
+  }
+}
+
+/**
+ * 依頼内容を自動仕分け（フロントエンドから呼び出し）
+ * @param {Object} e - リクエストパラメータ
+ * @return {ContentService.TextOutput} JSONレスポンス
+ */
+function handleClassifyRequest(e) {
+  try {
+    const authResult = checkAuthorization();
+    if (!authResult.authorized) {
+      return ContentService.createTextOutput(JSON.stringify({
+        success: false,
+        error: 'アクセス権限がありません'
+      }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const postData = JSON.parse(e.postData.contents || '{}');
+    
+    const classification = classifyRequest(
+      postData.issue || '',
+      postData.requestTypeDetail || '',
+      postData.brand || '',
+      postData.householdId || '',
+      postData.studentNumber || '',
+      postData.selectionNumber || '',
+      postData.teacherNumber || ''
+    );
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      classification: classification
+    }))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (e) {
+    Logger.log('handleClassifyRequest エラー: ' + e.toString());
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: '自動仕分け中にエラーが発生しました'
+    }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**
+ * 推奨項目を取得（フロントエンドから呼び出し）
+ * @param {Object} e - リクエストパラメータ
+ * @return {ContentService.TextOutput} JSONレスポンス
+ */
+function handleGetRecommendedFields(e) {
+  try {
+    const authResult = checkAuthorization();
+    if (!authResult.authorized) {
+      return ContentService.createTextOutput(JSON.stringify({
+        success: false,
+        error: 'アクセス権限がありません'
+      }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    const postData = JSON.parse(e.postData.contents || '{}');
+    
+    const recommendations = getRecommendedFields(
+      postData.requestType || 'system_team',
+      postData.requestTypeDetail || ''
+    );
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      recommendations: recommendations
+    }))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (e) {
+    Logger.log('handleGetRecommendedFields エラー: ' + e.toString());
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: '推奨項目の取得中にエラーが発生しました'
+    }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**
+ * 自分の依頼一覧を取得
+ * @return {Object} 依頼一覧データ
+ */
+function getMyRequests() {
+  try {
+    const authResult = checkAuthorization();
+    if (!authResult.authorized) {
+      return {
+        success: false,
+        error: 'アクセス権限がありません'
+      };
+    }
+    
+    const spreadsheetId = '1mivDNOXpZsE7oW7gF10Rq3NvnYjxjfiVQWp4LHIorL0';
+    const sheet = SpreadsheetApp.openById(spreadsheetId).getSheetByName('依頼_統合管理');
+    
+    if (!sheet) {
+      return {
+        success: true,
+        requests: []
+      };
+    }
+    
+    const data = getSheetDataOptimized(sheet);
+    
+    if (data.length <= 1) {
+      return {
+        success: true,
+        requests: []
+      };
+    }
+    
+    // 現在のユーザーを取得
+    const currentUser = Session.getActiveUser().getEmail();
+    const userPrefix = currentUser.split('@')[0];
+    
+    // ヘッダー行をスキップ
+    const rows = data.slice(1);
+    
+    // 自分の依頼をフィルタリング
+    const myRequests = rows
+      .filter(row => {
+        const requester = row[4]; // 依頼者列（インデックス4）
+        return requester && requester.toString().includes(userPrefix);
+      })
+      .map(row => ({
+        requestId: row[0] || '', // 依頼ID
+        requestDate: row[1] || new Date(), // 受付日
+        requestType: row[2] === 'システムチーム' ? 'system_team' : 
+                     row[2] === '経理' ? 'accounting' : 'unknown', // 依頼種別
+        brand: row[3] || '', // ブランド
+        requester: row[4] || '', // 依頼者
+        summary: row[5] || '', // 要約
+        status: row[8] || '未設定', // 状態
+        urgency: row[9] || '低' // 緊急度（優先度）
+      }))
+      .sort((a, b) => {
+        // 受付日でソート（新しい順）
+        const dateA = a.requestDate instanceof Date ? a.requestDate : new Date(a.requestDate);
+        const dateB = b.requestDate instanceof Date ? b.requestDate : new Date(b.requestDate);
+        return dateB - dateA;
+      });
+    
+    return {
+      success: true,
+      requests: myRequests
+    };
+  } catch (e) {
+    Logger.log('getMyRequests エラー: ' + e.toString());
+    return {
+      success: false,
+      error: 'データの取得に失敗しました'
+    };
   }
 }
 

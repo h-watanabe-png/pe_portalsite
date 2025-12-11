@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ユーザーマニュアル - PEポータルサイト</title>
+  <link rel="stylesheet" href="common.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <!-- 固定ヘッダー -->
+    <header>
+      <h1>PEポータルサイト - ユーザーマニュアル</h1>
+      <div class="user-info">
+        <a href="?path=index" class="nav-link">ホームに戻る</a>
+      </div>
+    </header>
+    
+    <!-- メインコンテンツ -->
+    <main id="main-content" style="margin-top: 64px; padding: 32px 24px;">
+      
+      <!-- 目次 -->
+      <section class="section">
+        <h2 class="section-title">目次</h2>
+        <div class="card">
+          <ul style="list-style: none; padding: 0;">
+            <li style="margin-bottom: 12px;"><a href="#getting-started" style="color: #1a73e8; text-decoration: none;">1. はじめに</a></li>
+            <li style="margin-bottom: 12px;"><a href="#dashboard" style="color: #1a73e8; text-decoration: none;">2. ダッシュボードの使い方</a></li>
+            <li style="margin-bottom: 12px;"><a href="#request" style="color: #1a73e8; text-decoration: none;">3. 依頼の送信方法</a></li>
+            <li style="margin-bottom: 12px;"><a href="#status" style="color: #1a73e8; text-decoration: none;">4. 依頼状況の確認</a></li>
+            <li style="margin-bottom: 12px;"><a href="#search" style="color: #1a73e8; text-decoration: none;">5. 検索機能の使い方</a></li>
+            <li style="margin-bottom: 12px;"><a href="#spreadsheet" style="color: #1a73e8; text-decoration: none;">6. スプレッドシートでの操作</a></li>
+            <li style="margin-bottom: 12px;"><a href="#faq" style="color: #1a73e8; text-decoration: none;">7. よくある質問</a></li>
+          </ul>
+        </div>
+      </section>
+      
+      <!-- 1. はじめに -->
+      <section id="getting-started" class="section">
+        <h2 class="section-title">1. はじめに</h2>
+        <div class="card">
+          <h3>PEポータルサイトとは</h3>
+          <p>PEポータルサイトは、システムチームと経理部門への依頼を一元管理する社内ポータルサイトです。以下の機能を提供します：</p>
+          <ul>
+            <li><strong>依頼の送信</strong>: システムチームや経理への依頼を簡単に送信できます</li>
+            <li><strong>依頼状況の確認</strong>: 送信した依頼の進捗状況をリアルタイムで確認できます</li>
+            <li><strong>検索機能</strong>: FAQやナレッジベースを検索して、過去の対応履歴を参照できます</li>
+            <li><strong>ダッシュボード</strong>: 自分の依頼残数や全体の処理状況を一目で確認できます</li>
+          </ul>
+          
+          <h3 style="margin-top: 24px;">アクセス方法</h3>
+          <p>PEポータルサイトは、Google Workspaceアカウントでログインしている状態でアクセスできます。初回アクセス時は、管理者によるアクセス権限の付与が必要です。</p>
+        </div>
+      </section>
+      
+      <!-- 2. ダッシュボードの使い方 -->
+      <section id="dashboard" class="section">
+        <h2 class="section-title">2. ダッシュボードの使い方</h2>
+        <div class="card">
+          <h3>ダッシュボードの構成</h3>
+          <p>ホーム画面（ダッシュボード）には、以下の情報が表示されます：</p>
+          
+          <h4 style="margin-top: 16px;">統計情報（KPIダッシュボード）</h4>
+          <ul>
+            <li><strong>自分の依頼残数</strong>: 自分が送信した依頼のうち、まだ完了していない件数</li>
+            <li><strong>全体の処理中件数</strong>: システム全体で処理中の依頼件数</li>
+            <li><strong>今月のお知らせ</strong>: 今月公開されているお知らせの件数</li>
+          </ul>
+          
+          <h4 style="margin-top: 16px;">最近の自分の依頼</h4>
+          <p>自分が送信した依頼の一覧が表示されます。各依頼の状態（新規/処理中/完了など）や緊急度を確認できます。</p>
+          
+          <h4 style="margin-top: 16px;">クイックアクション</h4>
+          <p>よく使う機能へのショートカットボタンが表示されます：</p>
+          <ul>
+            <li><strong>システムチームへ依頼</strong>: PC設定、システム改修などの依頼</li>
+            <li><strong>経理へ依頼</strong>: 請求書チェック、報酬計算などの依頼</li>
+            <li><strong>依頼状況確認</strong>: 送信した依頼の状況を確認</li>
+            <li><strong>FAQ・ヘルプ</strong>: よくある質問とナレッジ検索</li>
+          </ul>
+          
+          <h4 style="margin-top: 16px;">キャッシュ状態インジケーター</h4>
+          <p>ヘッダー右側に表示されるインジケーターで、データの新しさを確認できます：</p>
+          <ul>
+            <li>🟢 <strong>緑</strong>: データは最新です（20分以内に更新）</li>
+            <li>🟠 <strong>オレンジ</strong>: データが古いです（20分以上経過）</li>
+            <li>🔄 <strong>更新ボタン</strong>: データが古い場合、🔄ボタンをクリックして更新できます</li>
+          </ul>
+        </div>
+      </section>
+      
+      <!-- 3. 依頼の送信方法 -->
+      <section id="request" class="section">
+        <h2 class="section-title">3. 依頼の送信方法</h2>
+        <div class="card">
+          <h3>システムチームへの依頼</h3>
+          <p>「システムチームへ依頼」ボタンをクリックして、以下の情報を入力します：</p>
+          
+          <h4 style="margin-top: 16px;">必須項目</h4>
+          <ul>
+            <li><strong>依頼者氏名</strong>: 自分の氏名を入力</li>
+            <li><strong>ブランド</strong>: EB、TKT、その他から選択</li>
+            <li><strong>依頼種別（詳細）</strong>: システム不具合、データ修正、権限設定などから選択</li>
+            <li><strong>緊急度</strong>: 高（業務停止）、中（業務に支障あり）、低（業務に支障なし）から選択</li>
+            <li><strong>重要度</strong>: 高（業務停止）、中（業務に支障あり）、低（業務に支障なし）から選択</li>
+            <li><strong>発生している問題</strong>: 問題の詳細を記述</li>
+          </ul>
+          
+          <h4 style="margin-top: 16px;">任意項目</h4>
+          <ul>
+            <li><strong>対応希望日</strong>: 対応を希望する日付</li>
+            <li><strong>世帯ID、生徒番号、選考番号、教師番号</strong>: 関連する情報があれば入力</li>
+            <li><strong>希望の対応</strong>: 希望する対応内容</li>
+            <li><strong>発生頻度</strong>: 常に発生、時々発生、初めて発生、不明から選択</li>
+            <li><strong>エラー文・URL</strong>: エラーメッセージや関連URL</li>
+            <li><strong>備考</strong>: その他の情報</li>
+          </ul>
+          
+          <h4 style="margin-top: 16px;">自動仕分け機能</h4>
+          <p>依頼内容を入力すると、自動的に「システムチーム」または「経理」に仕分けされます。自動仕分けが正しい場合はそのまま送信し、間違っている場合は修正してから送信してください。</p>
+          
+          <h3 style="margin-top: 24px;">経理への依頼</h3>
+          <p>「経理へ依頼」ボタンをクリックして、以下の情報を入力します：</p>
+          
+          <h4 style="margin-top: 16px;">必須項目</h4>
+          <ul>
+            <li><strong>依頼者氏名</strong>: 自分の氏名を入力</li>
+            <li><strong>ブランド</strong>: EB、TKT、その他から選択</li>
+            <li><strong>依頼種別</strong>: 請求関連、支払関連、口座・決済関連、報酬関連、その他から選択</li>
+            <li><strong>緊急度</strong>: 高（業務停止）、中（業務に支障あり）、低（業務に支障なし）から選択</li>
+            <li><strong>重要度</strong>: 高（業務停止）、中（業務に支障あり）、低（業務に支障なし）から選択</li>
+            <li><strong>依頼内容詳細</strong>: 依頼の詳細を記述</li>
+          </ul>
+          
+          <h4 style="margin-top: 16px;">締日管理機能（請求関連の場合）</h4>
+          <p>請求関連の依頼の場合は、以下の項目を設定できます：</p>
+          <ul>
+            <li><strong>締日種別</strong>: 当月15日、翌月15日、指定日から選択</li>
+            <li><strong>締日</strong>: 締日種別を選択すると自動計算されます（手動で指定することも可能）</li>
+          </ul>
+          <p>締日が近い場合（7日以内）、自動的に優先度が「高」に設定され、リマインダーが送信されます。</p>
+        </div>
+      </section>
+      
+      <!-- 4. 依頼状況の確認 -->
+      <section id="status" class="section">
+        <h2 class="section-title">4. 依頼状況の確認</h2>
+        <div class="card">
+          <h3>依頼状況確認画面</h3>
+          <p>「依頼状況確認」ボタンをクリックすると、自分が送信した依頼の一覧が表示されます。</p>
+          
+          <h4 style="margin-top: 16px;">表示される情報</h4>
+          <ul>
+            <li><strong>依頼ID</strong>: 依頼の一意識別子</li>
+            <li><strong>受付日</strong>: 依頼が送信された日時</li>
+            <li><strong>依頼種別</strong>: システムチームまたは経理</li>
+            <li><strong>要約</strong>: 依頼内容の要約</li>
+            <li><strong>状態</strong>: 新規、処理中、完了、保留、キャンセル</li>
+            <li><strong>緊急度</strong>: 高、中、低</li>
+          </ul>
+          
+          <h4 style="margin-top: 16px;">フィルタリング機能</h4>
+          <p>状態、緊急度、日付などでフィルタリングして、必要な依頼を素早く見つけることができます。</p>
+        </div>
+      </section>
+      
+      <!-- 5. 検索機能の使い方 -->
+      <section id="search" class="section">
+        <h2 class="section-title">5. 検索機能の使い方</h2>
+        <div class="card">
+          <h3>グローバル検索</h3>
+          <p>ホーム画面の検索バーから、FAQやナレッジベースを検索できます。2文字以上のキーワードを入力すると、自動的に検索が実行されます。</p>
+          
+          <h4 style="margin-top: 16px;">検索結果の種類</h4>
+          <ul>
+            <li><strong>ファイル</strong>: Google Driveに保存されているファイル</li>
+            <li><strong>ナレッジベース</strong>: 過去の対応履歴やナレッジ</li>
+            <li><strong>FAQ</strong>: よくある質問</li>
+          </ul>
+          
+          <h4 style="margin-top: 16px;">検索結果の評価</h4>
+          <p>検索結果の各項目に「👍/👎」ボタンが表示されます。役に立った場合は👍、役に立たなかった場合は👎をクリックしてください。このフィードバックは、検索精度の向上に活用されます。</p>
+          
+          <h3 style="margin-top: 24px;">FAQ・ヘルプ画面</h3>
+          <p>「FAQ・ヘルプ」ボタンをクリックすると、より詳細な検索が可能です。カテゴリでフィルタリングしたり、ナレッジを追加・更新することもできます。</p>
+        </div>
+      </section>
+      
+      <!-- 6. スプレッドシートでの操作 -->
+      <section id="spreadsheet" class="section">
+        <h2 class="section-title">6. スプレッドシートでの操作</h2>
+        <div class="card">
+          <h3>スプレッドシートでの依頼管理</h3>
+          <p>PEポータルサイトのデータは、Googleスプレッドシート「PEポータルサイト管理」で管理されています。スプレッドシートから直接、依頼の状態を更新することもできます。</p>
+          
+          <h4 style="margin-top: 16px;">主なシート</h4>
+          <ul>
+            <li><strong>依頼_統合管理</strong>: すべての依頼を一元管理</li>
+            <li><strong>依頼_システムチーム</strong>: システムチームへの依頼詳細</li>
+            <li><strong>依頼_経理</strong>: 経理への依頼詳細</li>
+          </ul>
+          
+          <h4 style="margin-top: 16px;">プルダウンでの更新</h4>
+          <p>スプレッドシートでは、以下の項目はプルダウンから選択できるようになっています：</p>
+          <ul>
+            <li><strong>状態</strong>: 新規、処理中、完了、保留、キャンセル</li>
+            <li><strong>優先度</strong>: 高（業務停止）、中（業務に支障あり）、低（業務に支障なし）</li>
+            <li><strong>緊急度</strong>: 緊急（1時間以内）、高（当日中）、中（3日以内）、低（1週間以内）</li>
+            <li><strong>担当者</strong>: 担当者リストから選択</li>
+            <li><strong>ブランド</strong>: EB、TKT、その他</li>
+          </ul>
+          <p>プルダウンから選択するだけで更新できるため、タイピングミスを防げます。</p>
+          
+          <h4 style="margin-top: 16px;">スプレッドシートでの操作手順</h4>
+          <ol>
+            <li>Googleスプレッドシート「PEポータルサイト管理」を開く</li>
+            <li>「依頼_統合管理」シートを開く</li>
+            <li>更新したい依頼の行を探す（依頼IDで検索）</li>
+            <li>状態、優先度、担当者などの列で、プルダウンから選択して更新</li>
+            <li>変更は自動保存されます</li>
+          </ol>
+          
+          <h4 style="margin-top: 16px;">注意事項</h4>
+          <ul>
+            <li>スプレッドシートでの更新は、アプリのキャッシュに反映されるまで最大20分かかる場合があります</li>
+            <li>重要な更新の場合は、アプリの🔄ボタンからキャッシュを更新してください</li>
+            <li>依頼IDや受付日などの重要な項目は変更しないでください</li>
+          </ul>
+        </div>
+      </section>
+      
+      <!-- 7. よくある質問 -->
+      <section id="faq" class="section">
+        <h2 class="section-title">7. よくある質問</h2>
+        <div class="card">
+          <h3>Q1: 依頼を送信したのに、依頼状況確認画面に表示されません</h3>
+          <p><strong>A:</strong> 以下の点を確認してください：</p>
+          <ul>
+            <li>送信が正常に完了したか（成功メッセージが表示されたか）</li>
+            <li>ブラウザをリロードしてみる</li>
+            <li>キャッシュを更新してみる（ヘッダーの🔄ボタン）</li>
+            <li>スプレッドシート「依頼_統合管理」にデータが追加されているか確認</li>
+          </ul>
+          
+          <h3 style="margin-top: 24px;">Q2: ダッシュボードが表示されません</h3>
+          <p><strong>A:</strong> 以下の点を確認してください：</p>
+          <ul>
+            <li>Googleアカウントでログインしているか</li>
+            <li>アクセス権限が付与されているか（管理者に確認）</li>
+            <li>ブラウザのキャッシュをクリアしてから再アクセス</li>
+            <li>ネットワーク接続を確認</li>
+          </ul>
+          
+          <h3 style="margin-top: 24px;">Q3: 検索結果が表示されません</h3>
+          <p><strong>A:</strong> 以下の点を確認してください：</p>
+          <ul>
+            <li>検索キーワードを2文字以上入力しているか</li>
+            <li>キャッシュを更新してみる（ヘッダーの🔄ボタン）</li>
+            <li>より具体的なキーワードで検索してみる</li>
+            <li>カテゴリでフィルタリングしてみる</li>
+          </ul>
+          
+          <h3 style="margin-top: 24px;">Q4: 締日リマインダーが届きません</h3>
+          <p><strong>A:</strong> 以下の点を確認してください：</p>
+          <ul>
+            <li>依頼の締日が正しく設定されているか</li>
+            <li>Slack通知の設定が正しいか</li>
+            <li>リマインダーは7日前、3日前、当日に送信されます</li>
+          </ul>
+          
+          <h3 style="margin-top: 24px;">Q5: スプレッドシートで更新した内容がアプリに反映されません</h3>
+          <p><strong>A:</strong> スプレッドシートでの更新は、キャッシュに反映されるまで最大20分かかる場合があります。すぐに反映させたい場合は、アプリのヘッダーの🔄ボタンからキャッシュを更新してください。</p>
+        </div>
+      </section>
+      
+      <!-- サポート -->
+      <section class="section">
+        <h2 class="section-title">サポート</h2>
+        <div class="card">
+          <p>問題が解決しない場合は、以下の方法でサポートを受けてください：</p>
+          <ul>
+            <li><strong>トラブルシューティングガイド</strong>: より詳細なトラブルシューティング方法は、<a href="?path=troubleshooting" style="color: #1a73e8;">トラブルシューティングガイド</a>を参照してください</li>
+            <li><strong>プロジェクトチームへの連絡</strong>: エラーメッセージやスクリーンショットとともに、プロジェクトチームまでお問い合わせください</li>
+          </ul>
+        </div>
+      </section>
+      
+    </main>
+  </div>
+</body>
+</html>
+

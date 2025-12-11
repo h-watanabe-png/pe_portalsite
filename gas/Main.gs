@@ -85,6 +85,15 @@ function doGet(e) {
   // 認証成功時は通常のページを返す
   const path = e.parameter.path || 'index';
   
+  // 許可されたパスのリスト
+  const allowedPaths = ['index', 'system-team-request', 'accounting-request', 'request-status', 'faq-help', 'user-manual', 'troubleshooting'];
+  
+  // パスが許可されているか確認
+  if (!allowedPaths.includes(path)) {
+    Logger.log('不正なパス: ' + path);
+    path = 'index';
+  }
+  
   try {
     return HtmlService.createTemplateFromFile(path)
       .evaluate()
@@ -125,14 +134,78 @@ function doPost(e) {
   }
   
   // アクションに応じて処理を分岐
-  const action = e.parameter.action;
+  let action;
+  let postDataObj = {};
   
+  // POSTデータを解析
+  if (e.postData && e.postData.contents) {
+    try {
+      postDataObj = JSON.parse(e.postData.contents);
+      action = postDataObj.action || e.parameter.action;
+    } catch (parseError) {
+      Logger.log('POSTデータ解析エラー: ' + parseError.toString());
+      action = e.parameter.action;
+    }
+  } else {
+    action = e.parameter.action;
+  }
+  
+  // eオブジェクトにpostDataを追加（互換性のため）
+  if (!e.postData && postDataObj) {
+    e.postData = {
+      contents: JSON.stringify(postDataObj)
+    };
+  }
+  
+  // アクションに応じて処理を分岐
   try {
     switch (action) {
       case 'submit_request':
         return handleSubmitRequest(e);
       case 'update_status':
         return handleUpdateStatus(e);
+      case 'classify_request':
+        return handleClassifyRequest(e);
+      case 'get_recommended_fields':
+        return handleGetRecommendedFields(e);
+      case 'get_my_requests':
+        const myRequestsResult = getMyRequests();
+        return ContentService.createTextOutput(JSON.stringify(myRequestsResult))
+          .setMimeType(ContentService.MimeType.JSON);
+      case 'get_user_info':
+        const userInfo = getUserInfo();
+        return ContentService.createTextOutput(JSON.stringify(userInfo))
+          .setMimeType(ContentService.MimeType.JSON);
+      case 'get_snapshot_cache_status':
+        const cacheStatus = getSnapshotCacheStatus();
+        return ContentService.createTextOutput(JSON.stringify({
+          success: true,
+          status: cacheStatus
+        }))
+          .setMimeType(ContentService.MimeType.JSON);
+      case 'update_snapshot_cache':
+        const updateResult = updateSnapshotCacheManual();
+        return ContentService.createTextOutput(JSON.stringify(updateResult))
+          .setMimeType(ContentService.MimeType.JSON);
+      case 'save_classification_feedback':
+        const postData = JSON.parse(e.postData.contents || '{}');
+        const classificationResult = saveClassificationFeedback(
+          postData.requestId || '',
+          postData.suggestedType || '',
+          postData.isCorrect || false,
+          postData.correctType || ''
+        );
+        return ContentService.createTextOutput(JSON.stringify(classificationResult))
+          .setMimeType(ContentService.MimeType.JSON);
+      case 'save_faq_feedback':
+        const faqPostData = JSON.parse(e.postData.contents || '{}');
+        const faqResult = saveFAQFeedback(
+          faqPostData.knowledgeId || '',
+          faqPostData.query || '',
+          faqPostData.wasHelpful || false
+        );
+        return ContentService.createTextOutput(JSON.stringify(faqResult))
+          .setMimeType(ContentService.MimeType.JSON);
       case 'search_knowledge':
         return handleSearchKnowledge(e);
       case 'add_knowledge':
@@ -150,11 +223,11 @@ function doPost(e) {
         }))
           .setMimeType(ContentService.MimeType.JSON);
     }
-  } catch (e) {
-    Logger.log('doPost エラー: ' + e.toString());
+  } catch (err) {
+    Logger.log('doPost エラー: ' + err.toString());
     return ContentService.createTextOutput(JSON.stringify({
       success: false,
-      error: '処理中にエラーが発生しました'
+      error: '処理中にエラーが発生しました: ' + err.toString()
     }))
       .setMimeType(ContentService.MimeType.JSON);
   }

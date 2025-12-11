@@ -75,6 +75,131 @@ function searchKnowledge(query, category = '', limit = 20) {
  */
 function searchKnowledgeBase(query, category = '', limit = 20) {
   try {
+    // スナップショットキャッシュから検索
+    const result = searchSnapshotCache('ナレッジベース', {
+      '公開': true
+    }, 1, limit);
+    
+    if (!result || !result.rows || result.rows.length === 0) {
+      return [];
+    }
+    
+    const { rows, headers } = result;
+    
+    // 列インデックスを取得
+    const titleCol = headers.indexOf('タイトル');
+    const categoryCol = headers.indexOf('カテゴリ');
+    const contentCol = headers.indexOf('内容');
+    const tagsCol = headers.indexOf('タグ');
+    const publicCol = headers.indexOf('公開');
+    const knowledgeIdCol = headers.indexOf('ナレッジID');
+    const relatedRequestIdsCol = headers.indexOf('関連依頼ID');
+    const createdAtCol = headers.indexOf('作成日');
+    const updatedAtCol = headers.indexOf('更新日');
+    const viewCountCol = headers.indexOf('参照回数');
+    
+    if (titleCol === -1 || categoryCol === -1) {
+      // 列が見つからない場合は通常の方法で検索
+      return searchKnowledgeBaseFallback(query, category, limit);
+    }
+    
+    // 検索条件でフィルタリング
+    const filteredRows = rows.filter(row => {
+      // 公開されているもののみ
+      if (row[publicCol] !== true && row[publicCol] !== 'TRUE') {
+        return false;
+      }
+      
+      // カテゴリでフィルタ
+      if (category && row[categoryCol] !== category) {
+        return false;
+      }
+      
+      // 検索クエリでフィルタ
+      if (query) {
+        const queryLower = query.toLowerCase();
+        const title = (row[titleCol] || '').toLowerCase();
+        const content = (row[contentCol] || '').toLowerCase();
+        const tags = (row[tagsCol] || '').toLowerCase();
+        
+        if (!title.includes(queryLower) && 
+            !content.includes(queryLower) && 
+            !tags.includes(queryLower)) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+    
+    // 検索条件でフィルタリング
+    const results = rows.filter(row => {
+      // 公開されているもののみ
+      if (row[9] !== true && row[9] !== 'TRUE') {
+        return false;
+      }
+      
+      // カテゴリでフィルタ
+      if (category && row[2] !== category) {
+        return false;
+      }
+      
+      // 検索クエリでフィルタ
+      if (query) {
+        const queryLower = query.toLowerCase();
+        const title = (row[1] || '').toLowerCase();
+        const content = (row[3] || '').toLowerCase();
+        const tags = (row[5] || '').toLowerCase();
+        
+        if (!title.includes(queryLower) && 
+            !content.includes(queryLower) && 
+            !tags.includes(queryLower)) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+    
+    // 更新日でソート（新しい順）
+    filteredRows.sort((a, b) => {
+      const dateA = a[updatedAtCol] instanceof Date ? a[updatedAtCol] : new Date(a[updatedAtCol] || 0);
+      const dateB = b[updatedAtCol] instanceof Date ? b[updatedAtCol] : new Date(b[updatedAtCol] || 0);
+      return dateB - dateA;
+    });
+    
+    // 件数制限
+    const limitedResults = filteredRows.slice(0, limit);
+    
+    // オブジェクトに変換
+    return limitedResults.map(row => ({
+      type: 'knowledge',
+      id: row[knowledgeIdCol] || '',
+      title: row[titleCol] || '',
+      category: row[categoryCol] || '',
+      content: row[contentCol] || '',
+      relatedRequestIds: row[relatedRequestIdsCol] ? row[relatedRequestIdsCol].toString().split(',').map(id => id.trim()) : [],
+      tags: row[tagsCol] ? row[tagsCol].toString().split(',').map(t => t.trim()) : [],
+      createdAt: row[createdAtCol] || new Date(),
+      updatedAt: row[updatedAtCol] || new Date(),
+      viewCount: row[viewCountCol] || 0
+    }));
+  } catch (e) {
+    Logger.log('ナレッジベース検索エラー: ' + e.toString());
+    // エラー時はフォールバック
+    return searchKnowledgeBaseFallback(query, category, limit);
+  }
+}
+
+/**
+ * ナレッジベースを検索（フォールバック、通常の方法）
+ * @param {string} query - 検索クエリ
+ * @param {string} category - カテゴリ
+ * @param {number} limit - 取得件数
+ * @return {Array<Object>} 検索結果
+ */
+function searchKnowledgeBaseFallback(query, category = '', limit = 20) {
+  try {
     const spreadsheetId = '1mivDNOXpZsE7oW7gF10Rq3NvnYjxjfiVQWp4LHIorL0';
     const sheet = SpreadsheetApp.openById(spreadsheetId).getSheetByName('ナレッジベース');
     
@@ -82,7 +207,7 @@ function searchKnowledgeBase(query, category = '', limit = 20) {
       return [];
     }
     
-    const data = getSheetDataOptimized(sheet);
+    const data = getSheetDataOptimized(sheet, 60, false); // スナップショットを使用しない
     
     if (data.length <= 1) {
       return [];
@@ -143,7 +268,7 @@ function searchKnowledgeBase(query, category = '', limit = 20) {
       viewCount: row[8] || 0
     }));
   } catch (e) {
-    Logger.log('ナレッジベース検索エラー: ' + e.toString());
+    Logger.log('ナレッジベース検索エラー（フォールバック）: ' + e.toString());
     return [];
   }
 }

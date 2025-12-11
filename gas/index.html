@@ -6,210 +6,579 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PEポータルサイト</title>
   <link rel="stylesheet" href="common.css">
-  <style>
-    .welcome-section {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 40px;
-      border-radius: 12px;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-    
-    .welcome-title {
-      font-size: 32px;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-    
-    .welcome-subtitle {
-      font-size: 18px;
-      opacity: 0.9;
-    }
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
+    <!-- 固定ヘッダー -->
     <header>
-      <h1>📋 PEポータルサイト</h1>
+      <h1>PEポータルサイト</h1>
       <div class="user-info">
-        <span class="user-status" id="user-status">未ログイン</span>
-        <a href="?path=faq-help" class="nav-link">❓ ヘルプ</a>
+        <span class="user-status" id="user-status">読み込み中...</span>
+        <div class="cache-status" id="cache-status">
+          <span class="cache-indicator" id="cache-indicator" title="スナップショットキャッシュの状態を確認"></span>
+          <button class="btn-cache-update" id="cache-update-btn" title="スナップショットキャッシュを更新" style="display: none;">
+            <span class="cache-update-icon">🔄</span>
+          </button>
+        </div>
+        <a href="?path=user-manual" class="nav-link">マニュアル</a>
+        <a href="?path=faq-help" class="nav-link">ヘルプ</a>
       </div>
     </header>
     
-    <main>
-      <!-- ウェルカムセクション -->
-      <div class="welcome-section">
-        <h2 class="welcome-title">ようこそ、PEポータルサイトへ</h2>
-        <p class="welcome-subtitle">システムチームや経理への依頼を簡単に管理できます</p>
-      </div>
+    <!-- メインコンテンツ -->
+    <main id="main-content">
+      <!-- ヒーローセクション（挨拶と検索） -->
+      <section class="hero-section">
+        <div class="hero-greeting">
+          こんにちは、<span class="user-name" id="user-name">ユーザー</span>さん
+        </div>
+        <div class="search-bar">
+          <input type="text" id="global-search" placeholder="FAQやナレッジを検索..." autocomplete="off">
+        </div>
+      </section>
       
-      <!-- ナビゲーションカード -->
-      <div class="nav-cards">
-        <a href="?path=system-team-request" class="nav-card">
-          <span class="nav-card-icon">💻</span>
-          <div class="nav-card-title">システムチームへの依頼</div>
-          <div class="nav-card-description">PC設定、システム改修などの依頼</div>
-        </a>
-        
-        <a href="?path=accounting-request" class="nav-card">
-          <span class="nav-card-icon">💰</span>
-          <div class="nav-card-title">経理への依頼</div>
-          <div class="nav-card-description">請求書チェック、報酬計算などの依頼</div>
-        </a>
-        
-        <a href="?path=request-status" class="nav-card">
-          <span class="nav-card-icon">📊</span>
-          <div class="nav-card-title">依頼状況確認</div>
-          <div class="nav-card-description">送信した依頼の状況を確認</div>
-        </a>
-        
-        <a href="?path=faq-help" class="nav-card">
-          <span class="nav-card-icon">❓</span>
-          <div class="nav-card-title">FAQ・ヘルプ</div>
-          <div class="nav-card-description">よくある質問とナレッジ検索</div>
-        </a>
-      </div>
-      
-      <!-- ダッシュボード -->
+      <!-- クイックアクション（グリッド配置） -->
       <section class="section">
-        <h2 class="section-title">📈 ダッシュボード</h2>
-        <div class="dashboard-grid" id="dashboard-grid">
-          <div class="dashboard-card">
-            <div class="dashboard-card-label">総リクエスト数</div>
-            <div class="dashboard-card-value">
-              <span id="total-requests">0</span>
+        <h2 class="section-title">クイックアクション</h2>
+        <div class="quick-actions">
+          <a href="?path=system-team-request" class="quick-action-card">
+            <span class="quick-action-icon">💻</span>
+            <div class="quick-action-title">システムチームへ依頼</div>
+            <div class="quick-action-description">PC設定、システム改修などの依頼</div>
+          </a>
+          
+          <a href="?path=accounting-request" class="quick-action-card">
+            <span class="quick-action-icon">💰</span>
+            <div class="quick-action-title">経理へ依頼</div>
+            <div class="quick-action-description">請求書チェック、報酬計算などの依頼</div>
+          </a>
+          
+          <a href="?path=request-status" class="quick-action-card">
+            <span class="quick-action-icon">📊</span>
+            <div class="quick-action-title">依頼状況確認</div>
+            <div class="quick-action-description">送信した依頼の状況を確認</div>
+          </a>
+          
+          <a href="?path=faq-help" class="quick-action-card">
+            <span class="quick-action-icon">❓</span>
+            <div class="quick-action-title">FAQ・ヘルプ</div>
+            <div class="quick-action-description">よくある質問とナレッジ検索</div>
+          </a>
+          
+          <a href="?path=user-manual" class="quick-action-card">
+            <span class="quick-action-icon">📖</span>
+            <div class="quick-action-title">ユーザーマニュアル</div>
+            <div class="quick-action-description">使い方ガイド</div>
+          </a>
+        </div>
+      </section>
+      
+      <!-- KPIダッシュボード（統計情報） -->
+      <section class="section">
+        <h2 class="section-title">統計情報</h2>
+        <div class="kpi-dashboard" id="kpi-dashboard">
+          <div class="kpi-card">
+            <div class="kpi-label">自分の依頼残数</div>
+            <div class="kpi-value">
+              <span id="my-pending-count">-</span>
             </div>
           </div>
           
-          <div class="dashboard-card">
-            <div class="dashboard-card-label">処理中</div>
-            <div class="dashboard-card-value">
-              <span id="processing-requests">0</span>
+          <div class="kpi-card">
+            <div class="kpi-label">全体の処理中件数</div>
+            <div class="kpi-value">
+              <span id="total-processing-count">-</span>
             </div>
           </div>
           
-          <div class="dashboard-card">
-            <div class="dashboard-card-label">完了</div>
-            <div class="dashboard-card-value">
-              <span id="completed-requests">0</span>
-            </div>
-          </div>
-          
-          <div class="dashboard-card">
-            <div class="dashboard-card-label">完了率</div>
-            <div class="dashboard-card-value">
-              <span id="completion-rate">0</span><span class="dashboard-card-unit">%</span>
+          <div class="kpi-card">
+            <div class="kpi-label">今月のお知らせ</div>
+            <div class="kpi-value">
+              <span id="announcement-count">-</span>
             </div>
           </div>
         </div>
       </section>
       
-      <!-- 最近の依頼 -->
+      <!-- 最新の状況（テーブル） -->
       <section class="section">
-        <h2 class="section-title">📋 最近の依頼</h2>
-        <div id="recent-requests">
-          <div class="empty-state">
-            <div class="empty-state-icon">📭</div>
-            <div class="empty-state-message">依頼がありません</div>
-            <div class="empty-state-description">上記のカードから新しい依頼を作成してください</div>
+        <h2 class="section-title">最近の自分の依頼</h2>
+        <div class="card">
+          <div id="recent-requests-container">
+            <div class="empty-state">
+              <div class="empty-state-icon">📭</div>
+              <div class="empty-state-message">依頼がありません</div>
+              <div class="empty-state-description">上記のクイックアクションから新しい依頼を作成してください</div>
+            </div>
           </div>
         </div>
       </section>
     </main>
   </div>
   
+  <!-- ローディングオーバーレイ -->
+  <div id="loading-overlay" class="loading-overlay hidden">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">読み込み中...</div>
+  </div>
+  
   <script src="dashboard.js"></script>
   <script>
-    // ページ読み込み時にダッシュボードデータを取得
+    // グローバル変数
+    let currentUser = null;
+    
+    // ページ読み込み時の初期化
     window.addEventListener('DOMContentLoaded', function() {
+      initializePage();
+    });
+    
+    /**
+     * ページ初期化
+     */
+    function initializePage() {
+      showLoading();
+      
       // ユーザー情報を取得
       google.script.run
         .withSuccessHandler(function(authResult) {
           if (authResult && authResult.authorized) {
-            document.getElementById('user-status').textContent = authResult.userEmail;
-            document.getElementById('user-status').style.background = 'rgba(40, 167, 69, 0.3)';
+            currentUser = authResult.userEmail;
+            // メールアドレスからユーザー名を抽出（@より前の部分）
+            const userName = authResult.userEmail ? authResult.userEmail.split('@')[0] : 'ユーザー';
+            updateUserInfo(userName);
+          } else {
+            updateUserInfo('未ログイン');
           }
         })
         .withFailureHandler(function(error) {
           console.error('認証チェックエラー:', error);
+          updateUserInfo('エラー');
+          hideLoading();
         })
         .checkAuthorization();
       
       // ダッシュボードデータを取得
       loadDashboardData();
-    });
+      
+      // キャッシュ状態を読み込む
+      loadCacheStatus();
+      
+      // 検索バーのイベントリスナー
+      setupSearchBar();
+    }
     
+    /**
+     * キャッシュ状態を読み込む
+     */
+    function loadCacheStatus() {
+      const url = window.location.href.split('?')[0];
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          action: 'get_snapshot_cache_status'
+        })
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result && result.success && result.status) {
+          displayCacheStatus(result.status);
+        }
+      })
+      .catch(error => {
+        console.error('キャッシュ状態取得エラー:', error);
+      });
+    }
+    
+    /**
+     * キャッシュ状態を表示
+     * @param {Object} status - キャッシュ状態
+     */
+    function displayCacheStatus(status) {
+      const indicator = document.getElementById('cache-indicator');
+      const updateBtn = document.getElementById('cache-update-btn');
+      
+      if (!indicator || !updateBtn) {
+        return;
+      }
+      
+      // 最も古い更新時刻を取得
+      let oldestUpdate = null;
+      let needsUpdate = status.needsUpdate || false;
+      
+      if (status.sheets && status.sheets.length > 0) {
+        const cachedSheets = status.sheets.filter(s => s.cached);
+        if (cachedSheets.length > 0) {
+          // 最も古い更新時刻を取得
+          const oldestSheet = cachedSheets.reduce((oldest, current) => {
+            if (!oldest || !oldest.lastUpdatedTimestamp) return current;
+            if (!current || !current.lastUpdatedTimestamp) return oldest;
+            return current.lastUpdatedTimestamp < oldest.lastUpdatedTimestamp ? current : oldest;
+          }, null);
+          
+          if (oldestSheet && oldestSheet.lastUpdatedTimestamp) {
+            oldestUpdate = new Date(oldestSheet.lastUpdatedTimestamp);
+            const ageMinutes = oldestSheet.ageMinutes || 0;
+            needsUpdate = needsUpdate || ageMinutes > 20; // 20分以上古い場合は更新が必要
+          }
+        }
+      }
+      
+      // インジケーターの表示を更新
+      if (needsUpdate) {
+        indicator.className = 'cache-indicator cache-old';
+        indicator.title = oldestUpdate 
+          ? `キャッシュが古いです（最終更新: ${formatCacheDate(oldestUpdate)}）`
+          : 'キャッシュがありません';
+        updateBtn.style.display = 'inline-block';
+      } else if (oldestUpdate) {
+        indicator.className = 'cache-indicator cache-fresh';
+        indicator.title = `キャッシュは最新です（最終更新: ${formatCacheDate(oldestUpdate)}）`;
+        updateBtn.style.display = 'none';
+      } else {
+        indicator.className = 'cache-indicator cache-unknown';
+        indicator.title = 'キャッシュ状態を確認できません';
+        updateBtn.style.display = 'none';
+      }
+      
+      // 更新ボタンのイベントリスナーを設定
+      updateBtn.onclick = function() {
+        updateCache();
+      };
+    }
+    
+    /**
+     * キャッシュを更新
+     */
+    function updateCache() {
+      const updateBtn = document.getElementById('cache-update-btn');
+      const indicator = document.getElementById('cache-indicator');
+      
+      if (!updateBtn || !indicator) {
+        return;
+      }
+      
+      // ボタンを無効化
+      updateBtn.disabled = true;
+      updateBtn.innerHTML = '<span class="cache-update-icon">⏳</span>';
+      indicator.className = 'cache-indicator cache-updating';
+      indicator.title = '更新中...';
+      
+      const url = window.location.href.split('?')[0];
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          action: 'update_snapshot_cache'
+        })
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result && result.success) {
+          // 成功時は状態を再読み込み
+          setTimeout(function() {
+            loadCacheStatus();
+          }, 1000);
+          
+          showSuccessMessage('スナップショットキャッシュを更新しました');
+        } else {
+          // エラー時
+          showError(result.error || 'キャッシュの更新に失敗しました');
+          indicator.className = 'cache-indicator cache-error';
+          indicator.title = result.error || '更新に失敗しました';
+        }
+      })
+      .catch(error => {
+        console.error('キャッシュ更新エラー:', error);
+        showError('キャッシュの更新中にエラーが発生しました');
+        indicator.className = 'cache-indicator cache-error';
+        indicator.title = '更新エラー';
+      })
+      .finally(function() {
+        // ボタンを再有効化
+        updateBtn.disabled = false;
+        updateBtn.innerHTML = '<span class="cache-update-icon">🔄</span>';
+      });
+    }
+    
+    /**
+     * キャッシュ日付をフォーマット
+     * @param {Date} date - 日付
+     * @return {string} フォーマットされた日付文字列
+     */
+    function formatCacheDate(date) {
+      if (!date) {
+        return '不明';
+      }
+      
+      const d = date instanceof Date ? date : new Date(date);
+      if (isNaN(d.getTime())) {
+        return '不明';
+      }
+      
+      const now = new Date();
+      const diff = now - d;
+      const minutes = Math.floor(diff / (60 * 1000));
+      const hours = Math.floor(minutes / 60);
+      const days = Math.floor(hours / 24);
+      
+      if (minutes < 1) {
+        return 'たった今';
+      } else if (minutes < 60) {
+        return minutes + '分前';
+      } else if (hours < 24) {
+        return hours + '時間前';
+      } else if (days < 7) {
+        return days + '日前';
+      } else {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const hours = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day} ${hours}:${minutes}`;
+      }
+    }
+    
+    /**
+     * 成功メッセージを表示
+     */
+    function showSuccessMessage(message) {
+      const container = document.getElementById('kpi-dashboard');
+      if (container) {
+        const successDiv = document.createElement('div');
+        successDiv.className = 'alert alert-success';
+        successDiv.style.gridColumn = '1 / -1';
+        successDiv.textContent = message;
+        container.insertBefore(successDiv, container.firstChild);
+        
+        // 3秒後に自動で非表示
+        setTimeout(() => {
+          successDiv.remove();
+        }, 3000);
+      }
+    }
+    
+    /**
+     * ユーザー情報を更新
+     */
+    function updateUserInfo(userName) {
+      const userStatusEl = document.getElementById('user-status');
+      const userNameEl = document.getElementById('user-name');
+      
+      if (userName && userName !== '未ログイン' && userName !== 'エラー') {
+        userStatusEl.textContent = userName;
+        userNameEl.textContent = userName;
+      } else {
+        userStatusEl.textContent = userName || '未ログイン';
+        userNameEl.textContent = 'ユーザー';
+      }
+    }
+    
+    /**
+     * ダッシュボードデータを読み込み
+     */
     function loadDashboardData() {
+      showLoading();
+      
       google.script.run
         .withSuccessHandler(function(data) {
+          hideLoading();
           if (data && data.success) {
-            // ダッシュボード統計を更新
-            document.getElementById('total-requests').textContent = data.stats.total || 0;
-            document.getElementById('processing-requests').textContent = data.stats.processing || 0;
-            document.getElementById('completed-requests').textContent = data.stats.completed || 0;
-            document.getElementById('completion-rate').textContent = data.stats.completionRate || 0;
-            
-            // 最近の依頼を表示
-            if (data.recentRequests && data.recentRequests.length > 0) {
-              displayRecentRequests(data.recentRequests);
-            }
+            updateKPIDashboard(data.stats || {});
+            displayRecentRequests(data.recentRequests || []);
+          } else {
+            console.error('ダッシュボードデータ取得失敗:', data);
+            showEmptyState();
+            showError('データの取得に失敗しました');
           }
         })
         .withFailureHandler(function(error) {
+          hideLoading();
           console.error('ダッシュボードデータ取得エラー:', error);
+          showEmptyState();
+          showError('データの取得中にエラーが発生しました: ' + error.toString());
         })
         .getDashboardData();
     }
     
+    /**
+     * エラーメッセージを表示
+     */
+    function showError(message) {
+      const container = document.getElementById('kpi-dashboard');
+      if (container) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'alert alert-error';
+        errorDiv.style.gridColumn = '1 / -1';
+        errorDiv.textContent = message;
+        container.insertBefore(errorDiv, container.firstChild);
+        
+        // 5秒後に自動で非表示
+        setTimeout(() => {
+          errorDiv.remove();
+        }, 5000);
+      }
+    }
+    
+    /**
+     * KPIダッシュボードを更新
+     */
+    function updateKPIDashboard(stats) {
+      document.getElementById('my-pending-count').textContent = stats.myPending || 0;
+      document.getElementById('total-processing-count').textContent = stats.totalProcessing || 0;
+      document.getElementById('announcement-count').textContent = stats.announcements || 0;
+    }
+    
+    /**
+     * 最近の依頼を表示
+     */
     function displayRecentRequests(requests) {
-      const container = document.getElementById('recent-requests');
+      const container = document.getElementById('recent-requests-container');
       
-      if (requests.length === 0) {
+      if (!requests || requests.length === 0) {
         container.innerHTML = `
           <div class="empty-state">
             <div class="empty-state-icon">📭</div>
             <div class="empty-state-message">依頼がありません</div>
-            <div class="empty-state-description">上記のカードから新しい依頼を作成してください</div>
+            <div class="empty-state-description">上記のクイックアクションから新しい依頼を作成してください</div>
           </div>
         `;
         return;
       }
       
-      let html = '<div class="card"><table class="data-table"><thead><tr>';
-      html += '<th>依頼ID</th><th>依頼種別</th><th>ブランド</th><th>緊急度</th><th>ステータス</th><th>受付日</th>';
+      let html = '<table class="data-table"><thead><tr>';
+      html += '<th>依頼ID</th><th>依頼種別</th><th>緊急度</th><th>ステータス</th><th>受付日</th>';
       html += '</tr></thead><tbody>';
       
       requests.forEach(request => {
-        const statusClass = request.status === '完了' ? 'completed' : 
-                           request.status === '処理中' ? 'processing' : 
-                           request.status === '保留' ? 'pending' : 'pending';
+        const statusClass = getStatusClass(request.status);
+        const urgencyClass = getUrgencyClass(request.urgency);
+        
+        const typeLabel = request.requestType === 'system_team' ? 'システムチーム' : 
+                         request.requestType === 'accounting' ? '経理' : '';
         
         html += `<tr>`;
-        html += `<td><strong>${escapeHtml(request.requestId || '')}</strong></td>`;
-        html += `<td>${escapeHtml(request.requestType === 'system_team' ? 'システムチーム' : '経理')}</td>`;
-        html += `<td>${escapeHtml(request.brand || '')}</td>`;
-        html += `<td><span class="badge badge-${request.urgency === '高' ? 'danger' : request.urgency === '中' ? 'warning' : 'primary'}">${escapeHtml(request.urgency || '')}</span></td>`;
-        html += `<td><span class="status-badge ${statusClass}">${escapeHtml(request.status || '')}</span></td>`;
-        html += `<td>${formatDate(request.requestDate)}</td>`;
+        html += `<td data-label="依頼ID"><strong>${escapeHtml(request.requestId || '')}</strong></td>`;
+        html += `<td data-label="依頼種別">${escapeHtml(typeLabel)}</td>`;
+        html += `<td data-label="緊急度"><span class="badge ${urgencyClass}">${escapeHtml(request.urgency || '')}</span></td>`;
+        html += `<td data-label="ステータス"><span class="status-badge ${statusClass}">${escapeHtml(request.status || '')}</span></td>`;
+        html += `<td data-label="受付日">${formatDate(request.requestDate)}</td>`;
         html += `</tr>`;
       });
       
-      html += '</tbody></table></div>';
+      html += '</tbody></table>';
       container.innerHTML = html;
     }
     
+    /**
+     * ステータスに応じたクラスを取得
+     */
+    function getStatusClass(status) {
+      if (status === '完了') return 'completed';
+      if (status === '処理中') return 'processing';
+      if (status === '保留') return 'pending';
+      if (status === 'キャンセル') return 'cancelled';
+      return 'pending';
+    }
+    
+    /**
+     * 緊急度に応じたクラスを取得
+     */
+    function getUrgencyClass(urgency) {
+      if (urgency === '高') return 'badge-danger';
+      if (urgency === '中') return 'badge-warning';
+      if (urgency === '低') return 'badge-primary';
+      return 'badge-primary';
+    }
+    
+    /**
+     * 検索バーの設定
+     */
+    function setupSearchBar() {
+      const searchInput = document.getElementById('global-search');
+      let searchTimeout;
+      
+      searchInput.addEventListener('input', function(e) {
+        clearTimeout(searchTimeout);
+        const query = e.target.value.trim();
+        
+        if (query.length >= 2) {
+          searchTimeout = setTimeout(function() {
+            performSearch(query);
+          }, 300);
+        }
+      });
+      
+      searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const query = e.target.value.trim();
+          if (query.length >= 2) {
+            performSearch(query);
+          }
+        }
+      });
+    }
+    
+    /**
+     * 検索を実行
+     */
+    function performSearch(query) {
+      // FAQ・ヘルプページにリダイレクト（検索クエリ付き）
+      window.location.href = `?path=faq-help&q=${encodeURIComponent(query)}`;
+    }
+    
+    /**
+     * 空の状態を表示
+     */
+    function showEmptyState() {
+      updateKPIDashboard({ myPending: 0, totalProcessing: 0, announcements: 0 });
+      displayRecentRequests([]);
+    }
+    
+    /**
+     * ローディング表示
+     */
+    function showLoading() {
+      document.getElementById('loading-overlay').classList.remove('hidden');
+    }
+    
+    /**
+     * ローディング非表示
+     */
+    function hideLoading() {
+      document.getElementById('loading-overlay').classList.add('hidden');
+    }
+    
+    /**
+     * HTMLエスケープ
+     */
     function escapeHtml(text) {
       const div = document.createElement('div');
       div.textContent = text;
       return div.innerHTML;
     }
     
+    /**
+     * 日付フォーマット
+     */
     function formatDate(date) {
       if (!date) return '';
       const d = new Date(date);
-      return d.toLocaleDateString('ja-JP');
+      if (isNaN(d.getTime())) return '';
+      return d.toLocaleDateString('ja-JP', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
     }
   </script>
 </body>
