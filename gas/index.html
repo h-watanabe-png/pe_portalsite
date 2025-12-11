@@ -204,11 +204,11 @@
         
         // ユーザー情報を取得
         google.script.run
-          .withSuccessHandler(function(authResult) {
-            if (authResult && authResult.authorized) {
-              currentUser = authResult.userEmail;
+          .withSuccessHandler(function(userInfo) {
+            if (userInfo && userInfo.success && userInfo.authorized) {
+              currentUser = userInfo.email;
               // メールアドレスからユーザー名を抽出（@より前の部分）
-              const userName = authResult.userEmail ? authResult.userEmail.split('@')[0] : 'ユーザー';
+              const userName = userInfo.email ? userInfo.email.split('@')[0] : 'ユーザー';
               updateUserInfo(userName);
             } else {
               updateUserInfo('未ログイン');
@@ -219,7 +219,7 @@
             updateUserInfo('エラー');
             hideLoading();
           })
-          .checkAuthorization();
+          .getUserInfo();
       });
       
       // ダッシュボードデータを取得

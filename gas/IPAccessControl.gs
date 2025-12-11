@@ -55,8 +55,7 @@ function checkIPAccess(ipAddress) {
  */
 function getAllowedIPs() {
   try {
-    const config = getConfig();
-    const spreadsheetId = config.system.spreadsheetId;
+    const spreadsheetId = '1mivDNOXpZsE7oW7gF10Rq3NvnYjxjfiVQWp4LHIorL0';
     const sheet = SpreadsheetApp.openById(spreadsheetId).getSheetByName('システム設定');
     
     if (!sheet) {
@@ -203,8 +202,7 @@ function isIPInWildcard(ipAddress, wildcard) {
  */
 function isIPAccessControlEnabled() {
   try {
-    const config = getConfig();
-    const spreadsheetId = config.system.spreadsheetId;
+    const spreadsheetId = '1mivDNOXpZsE7oW7gF10Rq3NvnYjxjfiVQWp4LHIorL0';
     const sheet = SpreadsheetApp.openById(spreadsheetId).getSheetByName('システム設定');
     
     if (!sheet) {
