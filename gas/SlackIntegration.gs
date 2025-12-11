@@ -41,9 +41,11 @@ function sendSlackNotificationEnhanced(data, type, requestType = 'system_team') 
     if (response.getResponseCode() === 200) {
       const responseData = JSON.parse(response.getContentText());
       
+      let threadUrl = '';
+      
       // スレッド情報を保存
       if (data.requestId && responseData.ts) {
-        const threadUrl = `https://${slackChannel}.slack.com/archives/${responseData.channel}/p${responseData.ts.replace('.', '')}`;
+        threadUrl = `https://${slackChannel}.slack.com/archives/${responseData.channel}/p${responseData.ts.replace('.', '')}`;
         saveSlackThreadInfo(data.requestId, responseData.ts, responseData.channel, threadUrl);
       }
       
