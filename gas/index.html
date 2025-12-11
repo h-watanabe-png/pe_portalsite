@@ -136,29 +136,92 @@
     });
     
     /**
+     * IPアドレスを取得（外部APIを使用）
+     */
+    function getClientIP() {
+      return new Promise((resolve) => {
+        // 複数のIP取得サービスを試行（フォールバック）
+        const ipServices = [
+          'https://api.ipify.org?format=json',
+          'https://api.ip.sb/ip',
+          'https://ifconfig.me/ip'
+        ];
+        
+        let currentIndex = 0;
+        
+        function tryNextService() {
+          if (currentIndex >= ipServices.length) {
+            // すべて失敗した場合は空文字を返す
+            resolve('');
+            return;
+          }
+          
+          fetch(ipServices[currentIndex])
+            .then(response => {
+              if (response.ok) {
+                return response.text();
+              }
+              throw new Error('IP取得失敗');
+            })
+            .then(data => {
+              // JSON形式の場合はパース
+              try {
+                const json = JSON.parse(data);
+                resolve(json.ip || data.trim() || '');
+              } catch (e) {
+                // テキスト形式の場合はそのまま
+                resolve(data.trim() || '');
+              }
+            })
+            .catch(error => {
+              console.log('IP取得サービス失敗:', ipServices[currentIndex], error);
+              currentIndex++;
+              tryNextService();
+            });
+        }
+        
+        tryNextService();
+      });
+    }
+    
+    /**
      * ページ初期化
      */
     function initializePage() {
       showLoading();
       
-      // ユーザー情報を取得
-      google.script.run
-        .withSuccessHandler(function(authResult) {
-          if (authResult && authResult.authorized) {
-            currentUser = authResult.userEmail;
-            // メールアドレスからユーザー名を抽出（@より前の部分）
-            const userName = authResult.userEmail ? authResult.userEmail.split('@')[0] : 'ユーザー';
-            updateUserInfo(userName);
-          } else {
-            updateUserInfo('未ログイン');
+      // IPアドレスを取得してURLパラメータに追加
+      getClientIP().then(clientIP => {
+        // IPアドレスをURLパラメータに追加（リロード時にも保持）
+        if (clientIP && !window.location.search.includes('clientIP=')) {
+          const url = new URL(window.location);
+          url.searchParams.set('clientIP', clientIP);
+          // 初回読み込み時のみURLを更新（無限ループを防ぐ）
+          if (!sessionStorage.getItem('ipAdded')) {
+            sessionStorage.setItem('ipAdded', 'true');
+            window.history.replaceState({}, '', url);
           }
-        })
-        .withFailureHandler(function(error) {
-          console.error('認証チェックエラー:', error);
-          updateUserInfo('エラー');
-          hideLoading();
-        })
-        .checkAuthorization();
+        }
+        
+        // ユーザー情報を取得
+        google.script.run
+          .withSuccessHandler(function(authResult) {
+            if (authResult && authResult.authorized) {
+              currentUser = authResult.userEmail;
+              // メールアドレスからユーザー名を抽出（@より前の部分）
+              const userName = authResult.userEmail ? authResult.userEmail.split('@')[0] : 'ユーザー';
+              updateUserInfo(userName);
+            } else {
+              updateUserInfo('未ログイン');
+            }
+          })
+          .withFailureHandler(function(error) {
+            console.error('認証チェックエラー:', error);
+            updateUserInfo('エラー');
+            hideLoading();
+          })
+          .checkAuthorization();
+      });
       
       // ダッシュボードデータを取得
       loadDashboardData();

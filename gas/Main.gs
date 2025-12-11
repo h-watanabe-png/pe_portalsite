@@ -10,6 +10,75 @@
  * @return {HtmlOutput} HTML出力
  */
 function doGet(e) {
+  // IPアドレスチェック（有効な場合）
+  if (isIPAccessControlEnabled()) {
+    const clientIP = e.parameter.clientIP || ''; // フロントエンドから送信されたIPアドレス
+    const ipCheckResult = checkIPAccess(clientIP);
+    
+    if (!ipCheckResult.allowed) {
+      Logger.log('IPアドレスアクセス拒否: ' + clientIP);
+      return HtmlService.createHtmlOutput(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>アクセス拒否 - PEポータルサイト</title>
+          <style>
+            body {
+              font-family: 'Noto Sans JP', sans-serif;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              min-height: 100vh;
+              margin: 0;
+              background-color: #f5f5f5;
+            }
+            .container {
+              background: white;
+              padding: 40px;
+              border-radius: 8px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+              max-width: 500px;
+              text-align: center;
+            }
+            h1 {
+              color: #d32f2f;
+              margin-bottom: 20px;
+            }
+            p {
+              color: #666;
+              line-height: 1.6;
+              margin-bottom: 20px;
+            }
+            .contact {
+              margin-top: 30px;
+              padding-top: 20px;
+              border-top: 1px solid #eee;
+            }
+            .contact a {
+              color: #1976d2;
+              text-decoration: none;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>⚠️ アクセス拒否</h1>
+            <p>IPアドレスが許可されていません。</p>
+            <p style="font-size: 12px; color: #999;">IPアドレス: ${clientIP || '取得できませんでした'}</p>
+            <div class="contact">
+              <p>お問い合わせ: <a href="mailto:h-watanabe@tomonokai-corp.com">h-watanabe@tomonokai-corp.com</a></p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `)
+        .setTitle('アクセス拒否 - PEポータルサイト')
+        .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+    }
+  }
+  
   // 認証チェック
   const authResult = checkAuthorization();
   
@@ -17,7 +86,8 @@ function doGet(e) {
   logAccess('doGet', {
     authorized: authResult.authorized,
     userEmail: authResult.userEmail,
-    path: e.parameter.path || 'index'
+    path: e.parameter.path || 'index',
+    clientIP: e.parameter.clientIP || ''
   });
   
   if (!authResult.authorized) {
@@ -115,6 +185,38 @@ function doGet(e) {
  * @return {HtmlOutput} HTML出力
  */
 function doPost(e) {
+  // IPアドレスチェック（有効な場合）
+  if (isIPAccessControlEnabled()) {
+    let clientIP = '';
+    
+    // POSTデータからIPアドレスを取得
+    if (e.postData && e.postData.contents) {
+      try {
+        const postDataObj = JSON.parse(e.postData.contents);
+        clientIP = postDataObj.clientIP || '';
+      } catch (parseError) {
+        Logger.log('POSTデータ解析エラー: ' + parseError.toString());
+      }
+    }
+    
+    // パラメータからも取得を試みる
+    if (!clientIP && e.parameter.clientIP) {
+      clientIP = e.parameter.clientIP;
+    }
+    
+    const ipCheckResult = checkIPAccess(clientIP);
+    
+    if (!ipCheckResult.allowed) {
+      Logger.log('IPアドレスアクセス拒否 (POST): ' + clientIP);
+      return ContentService.createTextOutput(JSON.stringify({
+        success: false,
+        error: 'IPアドレスが許可されていません',
+        clientIP: clientIP
+      }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+  
   // 認証チェック
   const authResult = checkAuthorization();
   
@@ -122,7 +224,8 @@ function doPost(e) {
   logAccess('doPost', {
     authorized: authResult.authorized,
     userEmail: authResult.userEmail,
-    action: e.parameter.action || 'unknown'
+    action: e.parameter.action || 'unknown',
+    clientIP: e.parameter.clientIP || (e.postData && e.postData.contents ? JSON.parse(e.postData.contents).clientIP : '') || ''
   });
   
   if (!authResult.authorized) {
